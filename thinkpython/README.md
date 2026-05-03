@@ -1,12 +1,6 @@
 # Think Like Python: Website-Ready HTML Package
 
-Upload every file in this folder to:
-
-`https://progretech.com/edmaterial/`
-
-Recommended home page:
-
-`https://progretech.com/edmaterial/index.html`
+GitHub hosted copy of my ThinkPython guide/e-book hosted on progretech.com/thinkpython/index.html
 
 ## File Map
 
