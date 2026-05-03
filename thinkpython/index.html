@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Think Like Python: A Guide for ABAP Developers</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f4f6f8;
+    color: #333;
+}
+header {
+    background-color: #0b1f3a;
+    color: white;
+    padding: 40px;
+    text-align: center;
+}
+header h1 {
+    margin: 0;
+}
+.container {
+    padding: 40px;
+    max-width: 1000px;
+    margin: auto;
+}
+.section {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+}
+h2 {
+    color: #0b1f3a;
+}
+.accordion {
+    cursor: pointer;
+    padding: 15px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    background-color: #e8eef7;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+.panel {
+    padding: 0 15px;
+    display: none;
+    background-color: white;
+    overflow: hidden;
+}
+.code-block {
+    background-color: #272822;
+    color: #f8f8f2;
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+.split {
+    display: flex;
+    gap: 20px;
+}
+.split div {
+    width: 50%;
+}
+
+.book-nav {
+    background: #ffffff;
+    border-bottom: 1px solid #d9e2ec;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+.book-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.book-nav-title {
+    color: #0b1f3a;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+.book-nav-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.book-nav a {
+    color: #0b1f3a;
+    text-decoration: none;
+    border: 1px solid #c8d4e3;
+    background: #f8fafc;
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 0.92rem;
+}
+.book-nav a:hover {
+    background: #e8eef7;
+}
+.book-nav a.primary-link {
+    background: #0b1f3a;
+    color: #ffffff;
+    border-color: #0b1f3a;
+}
+.chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+.chapter-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.06);
+}
+.chapter-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(11,31,58,0.12);
+}
+.chapter-card .eyebrow {
+    color: #13a89e;
+    font-weight: 700;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.chapter-card h3 {
+    margin: 8px 0;
+    color: #0b1f3a;
+}
+.chapter-card p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+@media (max-width: 700px) {
+    .book-nav-inner { align-items: flex-start; }
+    .book-nav-links { width: 100%; }
+    .book-nav a { flex: 1 1 auto; text-align: center; }
+}
+
+
+.site-footer {
+    text-align: center;
+    margin: 42px auto 24px;
+    padding: 18px 20px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+</style>
+</head>
+
+<body>
+<nav class="book-nav" aria-label="Book navigation">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">Think Like Python</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-00-getting-your-python-workbench-ready.html">Start Chapter 0</a></div>
+  </div>
+</nav>
+
+
+<header>
+    <h1>Think Like Python</h1>
+    <p>A Guide for ABAP Developers</p>
+</header>
+
+<div class="container">
+
+<div class="section">
+<h2>Welcome</h2>
+<p>
+This guide is built for ABAP developers who want to expand into Python without losing their existing mindset.
+Instead of teaching Python from scratch, we translate what you already know into modern development patterns.
+</p>
+<p style="margin-top:15px; font-size:0.96em; color:#555;">
+Created by <a href="https://www.linkedin.com/in/edwinabdielrodz/" target="_blank" rel="noopener">Edwin A. Rodriguez</a> — Software Engineer and SRE focused on SAP reliability, automation, and modern development practices.
+</p>
+</div>
+
+<div class="section">
+<h2>What You Will Build</h2>
+<ul>
+<li>Python-based SAP data tools</li>
+<li>ALV-style dashboards using Bokeh</li>
+<li>Automation scripts for SAP workflows</li>
+<li>Simple web apps deployable to cloud platforms</li>
+</ul>
+</div>
+
+<div class="section">
+<h2>First Project Preview</h2>
+
+<div class="split">
+<div>
+<h3>ABAP Example</h3>
+<div class="code-block">
+SELECT * FROM mara INTO TABLE lt_mara.
+CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'.
+</div>
+</div>
+
+<div>
+<h3>Python Example</h3>
+<div class="code-block">
+import pandas as pd
+from bokeh.plotting import figure, show
+
+data = pd.read_csv("data.csv")
+p = figure(title="Material Data")
+p.line(data.index, data['value'])
+show(p)
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="section">
+<h2>Learning Approach</h2>
+
+<button class="accordion">ABAP Mindset</button>
+<div class="panel">
+<p>We start with familiar ABAP patterns and translate them step by step.</p>
+</div>
+
+<button class="accordion">Python Translation</button>
+<div class="panel">
+<p>Each concept is rewritten using Python tools and libraries.</p>
+</div>
+
+<button class="accordion">Build First</button>
+<div class="panel">
+<p>You will build working tools within your first sessions.</p>
+</div>
+
+</div>
+
+
+<div class="section" id="table-of-contents">
+<h2>Table of Contents</h2>
+<p>Use this section as the home base for the full web-book. Each chapter opens as its own page and includes navigation back here, plus previous and next chapter links.</p>
+<div class="chapter-grid">
+<a class="chapter-card" href="chapter-00-getting-your-python-workbench-ready.html">
+  <div class="eyebrow">Chapter 0</div>
+  <h3>Getting Your Python Workbench Ready</h3>
+  <p>Set up the workstation, editor, interpreter, and working habits for Python development.</p>
+</a>
+<a class="chapter-card" href="chapter-01-thinking-like-python.html">
+  <div class="eyebrow">Chapter 1</div>
+  <h3>Thinking Like Python</h3>
+  <p>Translate ABAP development instincts into Python concepts and workflows.</p>
+</a>
+<a class="chapter-card" href="chapter-02-first-project-alv-to-python.html">
+  <div class="eyebrow">Chapter 2</div>
+  <h3>First Project: ALV to Python</h3>
+  <p>Recreate a familiar SAP reporting pattern using Python, Pandas, and charting.</p>
+</a>
+<a class="chapter-card" href="chapter-03-make-it-useful.html">
+  <div class="eyebrow">Chapter 3</div>
+  <h3>Make It Useful</h3>
+  <p>Turn a basic script into something business users can understand and reuse.</p>
+</a>
+<a class="chapter-card" href="chapter-04-from-script-to-tool.html">
+  <div class="eyebrow">Chapter 4</div>
+  <h3>From Script to Tool</h3>
+  <p>Add structure, error handling, configuration, and repeatable execution.</p>
+</a>
+<a class="chapter-card" href="chapter-05-give-it-a-web-interface.html">
+  <div class="eyebrow">Chapter 5</div>
+  <h3>Give It a Web Interface</h3>
+  <p>Move from local scripts into Flask-style web utility patterns.</p>
+</a>
+<a class="chapter-card" href="chapter-06-make-the-flask-report-useful.html">
+  <div class="eyebrow">Chapter 6</div>
+  <h3>Make the Flask Report Useful</h3>
+  <p>Improve the web report experience with better inputs, outputs, and usability.</p>
+</a>
+<a class="chapter-card" href="chapter-07-btp-cloud-foundry.html">
+  <div class="eyebrow">Chapter 7</div>
+  <h3>BTP Cloud Foundry</h3>
+  <p>Package and deploy non-ABAP Python applications to SAP BTP Cloud Foundry.</p>
+</a>
+<a class="chapter-card" href="chapter-08-talking-to-sap-apis.html">
+  <div class="eyebrow">Chapter 8</div>
+  <h3>Talking to SAP APIs</h3>
+  <p>Connect Python applications to SAP APIs and handle authentication-aware patterns.</p>
+</a>
+<a class="chapter-card" href="chapter-09-ocr-flagship.html">
+  <div class="eyebrow">Chapter 9</div>
+  <h3>OCR Flagship</h3>
+  <p>Build a practical OCR use case with extraction, review, and integration thinking.</p>
+</a>
+<a class="chapter-card" href="chapter-10-ai-ocr-api-deployment.html">
+  <div class="eyebrow">Chapter 10</div>
+  <h3>AI OCR API Deployment</h3>
+  <p>Turn the OCR idea into an API-style deployable service with AI-ready architecture.</p>
+</a>
+<a class="chapter-card" href="chapter-11-alm-engineering-mindset.html">
+  <div class="eyebrow">Chapter 11</div>
+  <h3>From Developer to ALM Engineer</h3>
+  <p>Close the book with observability, automation-first thinking, and risk-based validation.</p>
+</a>
+</div>
+</div>
+
+
+<div class="section">
+<h2>About the Author</h2>
+<p>
+This guide was created by Edwin A. Rodriguez as a practical knowledge-share reference for ABAP developers moving into Python, automation, cloud workflows, and modern SAP development patterns.
+</p>
+<p><a href="about.html">Read more about the author and copyright details →</a></p>
+</div>
+
+<div class="section">
+<h2>Getting Started</h2>
+<p>
+Begin with Chapter 0 to set up your environment and tools, or jump directly to any chapter from the table of contents above.
+No prior Python experience is required.
+</p>
+</div>
+
+</div>
+
+<script>
+var acc = document.getElementsByClassName("accordion");
+for (var i = 0; i < acc.length; i++) {
+  acc[i].onclick = function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  }
+}
+</script>
+
+<footer class="site-footer">
+  © 2026 Edwin A. Rodriguez — Think Like Python. All rights reserved.
+</footer>
+
+</body>
+</html>

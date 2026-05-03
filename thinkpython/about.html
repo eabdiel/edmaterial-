@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>About - Think Like Python</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+    --navy: #0b1f3a;
+    --navy-soft: #12345f;
+    --teal: #13a89e;
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --text: #2d3748;
+    --muted: #64748b;
+}
+* { box-sizing: border-box; }
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+.book-nav {
+    background: #ffffff;
+    border-bottom: 1px solid #d9e2ec;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+.book-nav-inner {
+    max-width: 1100px;
+    margin: auto;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.book-nav-title {
+    font-weight: bold;
+    color: var(--navy);
+}
+.book-nav-links {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.book-nav a {
+    text-decoration: none;
+    color: var(--navy);
+    background: #e8eef7;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 0.92rem;
+}
+.book-nav a:hover { background: #dbeafe; }
+.book-nav a.primary-link {
+    background: var(--navy);
+    color: #fff;
+}
+header {
+    background: linear-gradient(135deg, var(--navy), var(--navy-soft));
+    color: white;
+    padding: 48px 24px;
+    text-align: center;
+}
+header h1 { margin: 0; font-size: 2.2rem; }
+header p { margin-top: 10px; color: #dbeafe; font-size: 1.05rem; }
+.container {
+    max-width: 1000px;
+    margin: auto;
+    padding: 32px 20px 60px;
+}
+.section {
+    background: var(--card);
+    padding: 26px;
+    margin-bottom: 22px;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+h2 { color: var(--navy); margin-top: 0; }
+a { color: #0b1f3a; font-weight: 600; }
+.callout {
+    border-left: 5px solid var(--teal);
+    background: #ecfeff;
+    padding: 16px 18px;
+    border-radius: 10px;
+}
+.site-footer {
+    text-align: center;
+    margin: 42px auto 24px;
+    padding: 18px 20px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+@media (max-width: 700px) {
+    .book-nav-inner { align-items: flex-start; }
+    .book-nav-links { width: 100%; }
+    .book-nav a { flex: 1 1 auto; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<nav class="book-nav" aria-label="Book navigation">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">Think Like Python</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-00-getting-your-python-workbench-ready.html">Start Chapter 0</a></div>
+  </div>
+</nav>
+
+<header>
+    <h1>About the Author</h1>
+    <p>Think Like Python: A Guide for ABAP Developers</p>
+</header>
+
+<div class="container">
+
+<div class="section">
+<h2>Edwin A. Rodriguez</h2>
+<p>
+Edwin is a Software Engineer and Site Reliability Engineer focused on making complex enterprise systems more reliable by automating manual work and reducing change risk. His work centers on helping high-risk SAP landscapes feel more modern, observable, and resilient.
+</p>
+<p>
+At Arthrex, he builds custom applications, microservices, AI agents, and automation frameworks that accelerate change cycles and help close DevOps gaps.
+</p>
+<p>
+Before that, he engineered SAP UI5 applications and backend integrations at Lockheed Martin, supporting large-scale financial transformations including S/4HANA migration work, Central Finance, SLT, Basis-AWS development, and performance under strict audit controls. Earlier roles across Axon, HCL, CSC, and DXC Technology deepened his SAP full-stack development and operations background.
+</p>
+<p>
+He started his career in ethical hacking and penetration testing, working with tools such as OllyDBG, WinAPI debugging, and VB decompilers, along with early bug bounty-style work for online platforms. While completing his degree, he also worked in web development and as an on-site Math/Computer Science tutor, building a foundation in systems thinking and problem-solving.
+</p>
+<p>
+Outside of enterprise work, Edwin enjoys tinkering with emerging technology such as AI, VR, AR, and security research.
+</p>
+<p>
+Connect on LinkedIn: <a href="https://www.linkedin.com/in/edwinabdielrodz/" target="_blank" rel="noopener">linkedin.com/in/edwinabdielrodz</a>
+</p>
+</div>
+
+<div class="section">
+<h2>About This Project</h2>
+<div class="callout">
+<p>
+<strong>Think Like Python</strong> is a practical knowledge-share project for ABAP developers who want to add Python to their SAP skillset. The goal is to bridge familiar ABAP concepts into Python patterns through guided examples, automation ideas, data handling, web apps, and cloud-ready thinking.
+</p>
+</div>
+</div>
+
+<div class="section">
+<h2>Copyright</h2>
+<p>
+© 2026 Edwin A. Rodriguez. All rights reserved.
+</p>
+<p>
+This material is shared for educational and community learning purposes. You are welcome to reference it for personal learning, but redistribution, republishing, or commercial use without permission is not allowed.
+</p>
+</div>
+
+<div class="book-nav" style="position: static; margin-top: 30px;">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">About Think Like Python</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="chapter-00-getting-your-python-workbench-ready.html">Start Chapter 0</a></div>
+  </div>
+</div>
+
+</div>
+
+<footer class="site-footer">
+  © 2026 Edwin A. Rodriguez — Think Like Python. All rights reserved.
+</footer>
+
+</body>
+</html>

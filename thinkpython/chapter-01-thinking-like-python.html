@@ -1,0 +1,497 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 1 - Thinking Like Python</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+    --navy: #0b1f3a;
+    --navy-soft: #12345f;
+    --teal: #13a89e;
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --text: #2d3748;
+    --muted: #64748b;
+    --code-bg: #1e1e1e;
+    --code-text: #f8f8f2;
+    --info-bg: #ecfeff;
+    --info-border: #06b6d4;
+    --warning-bg: #fff7ed;
+    --warning-border: #fb923c;
+    --success-bg: #f0fdf4;
+    --success-border: #22c55e;
+}
+* { box-sizing: border-box; }
+body { font-family: Arial, Helvetica, sans-serif; margin: 0; background: var(--bg); color: var(--text); line-height: 1.6; }
+header { background: linear-gradient(135deg, var(--navy), var(--navy-soft)); color: white; padding: 48px 24px; text-align: center; }
+header h1 { margin: 0; font-size: 2.2rem; }
+header p { color: #dbeafe; margin-top: 10px; }
+.container { max-width: 1150px; margin: auto; padding: 32px 20px 60px; }
+.section { background: var(--card); border-radius: 14px; padding: 26px; margin-bottom: 22px; box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08); }
+h2, h3 { color: var(--navy); }
+h2 { margin-top: 0; }
+.badge { display: inline-block; background: var(--teal); color: white; padding: 6px 10px; border-radius: 999px; font-size: 0.82rem; font-weight: bold; margin-bottom: 10px; }
+.side-by-side { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 14px; }
+.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.code-block { background: var(--code-bg); color: var(--code-text); padding: 16px; border-radius: 10px; overflow-x: auto; font-family: Consolas, Monaco, "Courier New", monospace; font-size: 0.92rem; white-space: pre; }
+.callout { padding: 16px; border-radius: 10px; margin: 18px 0; }
+.callout.info { background: var(--info-bg); border-left: 5px solid var(--info-border); }
+.callout.warning { background: var(--warning-bg); border-left: 5px solid var(--warning-border); }
+.callout.success { background: var(--success-bg); border-left: 5px solid var(--success-border); }
+.accordion { cursor: pointer; padding: 16px 18px; width: 100%; border: 1px solid #dbeafe; text-align: left; outline: none; background-color: #e8eef7; color: var(--navy); margin-top: 10px; border-radius: 10px; font-weight: bold; font-size: 1rem; }
+.accordion:hover { background-color: #dbeafe; }
+.panel { padding: 0 18px 18px; display: none; background-color: white; border: 1px solid #edf2f7; border-top: none; border-radius: 0 0 10px 10px; }
+.mini-table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+.mini-table th { background: #e8eef7; color: var(--navy); text-align: left; }
+.mini-table th, .mini-table td { border: 1px solid #dbeafe; padding: 10px; }
+.footer-note { color: var(--muted); font-size: 0.95rem; text-align: center; margin-top: 30px; }
+@media (max-width: 900px) { .side-by-side, .three-col { grid-template-columns: 1fr; } }
+
+.book-nav {
+    background: #ffffff;
+    border-bottom: 1px solid #d9e2ec;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+.book-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.book-nav-title {
+    color: #0b1f3a;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+.book-nav-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.book-nav a {
+    color: #0b1f3a;
+    text-decoration: none;
+    border: 1px solid #c8d4e3;
+    background: #f8fafc;
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 0.92rem;
+}
+.book-nav a:hover {
+    background: #e8eef7;
+}
+.book-nav a.primary-link {
+    background: #0b1f3a;
+    color: #ffffff;
+    border-color: #0b1f3a;
+}
+.chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+.chapter-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.06);
+}
+.chapter-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(11,31,58,0.12);
+}
+.chapter-card .eyebrow {
+    color: #13a89e;
+    font-weight: 700;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.chapter-card h3 {
+    margin: 8px 0;
+    color: #0b1f3a;
+}
+.chapter-card p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+@media (max-width: 700px) {
+    .book-nav-inner { align-items: flex-start; }
+    .book-nav-links { width: 100%; }
+    .book-nav a { flex: 1 1 auto; text-align: center; }
+}
+
+
+.site-footer {
+    text-align: center;
+    margin: 42px auto 24px;
+    padding: 18px 20px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+</style>
+</head>
+
+<body>
+<nav class="book-nav" aria-label="Book navigation">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">Think Like Python</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-00-getting-your-python-workbench-ready.html">Previous</a><a href="chapter-02-first-project-alv-to-python.html">Next</a></div>
+  </div>
+</nav>
+
+
+<header>
+    <h1>Chapter 1: Thinking Like Python</h1>
+    <p>From ABAP mindset to Python mindset without pretending your SAP experience does not matter</p>
+</header>
+
+<div class="container">
+
+<div class="section">
+    <span class="badge">Chapter Goal</span>
+    <h2>The Shift</h2>
+    <p>In ABAP, the SAP system gives you a lot of structure. You have tables, data elements, domains, function modules, classes, packages, transports, and built-in reporting tools like ALV.</p>
+    <p>In Python, you build more of that structure yourself. That can feel strange at first, but it also means you can create small tools, reports, dashboards, automations, and cloud-ready apps without waiting for every piece to live inside the SAP system.</p>
+    <div class="callout info"><strong>Important:</strong> This chapter is not asking you to abandon ABAP thinking. It is helping you translate it. Your ABAP experience is an advantage.</div>
+</div>
+
+<div class="section">
+    <h2>Concept Map: ABAP to Python</h2>
+    <table class="mini-table">
+        <tr><th>ABAP Concept</th><th>Python Concept</th><th>Plain-English Translation</th></tr>
+        <tr><td>Internal table</td><td>List of dictionaries, pandas DataFrame</td><td>A collection of rows</td></tr>
+        <tr><td>Work area</td><td>Dictionary or object</td><td>One row or one structured record</td></tr>
+        <tr><td>SELECT from database table</td><td>SQL query through a database connector</td><td>Read records from a database</td></tr>
+        <tr><td>ALV grid</td><td>Bokeh DataTable, HTML table, Streamlit table</td><td>Interactive output for users</td></tr>
+        <tr><td>Function module</td><td>Function, module, package, API call</td><td>Reusable logic or a reusable service</td></tr>
+        <tr><td>Transport request</td><td>Git commit / deployment pipeline</td><td>A controlled way to move changes</td></tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>Internal Tables vs Python Lists</h2>
+    <p>ABAP developers often start with internal tables because almost everything in reporting eventually becomes a table of records. Python can represent table-like data in different ways. The simplest is a list of dictionaries.</p>
+    <div class="side-by-side">
+        <div><h3>ABAP</h3><div class="code-block">DATA: lt_materials TYPE TABLE OF mara,
+      ls_material  TYPE mara.
+
+ls_material-matnr = '10000001'.
+ls_material-mtart = 'FERT'.
+APPEND ls_material TO lt_materials.</div></div>
+        <div><h3>Python</h3><div class="code-block">materials = []
+
+material = {
+    "matnr": "10000001",
+    "mtart": "FERT"
+}
+
+materials.append(material)</div></div>
+    </div>
+    <button class="accordion">Why this matters</button>
+    <div class="panel"><p>A Python list of dictionaries is flexible and easy to understand. Later, when we want filtering, grouping, exporting, or charting, we will often convert this kind of data into a pandas DataFrame.</p></div>
+</div>
+
+<div class="section">
+    <h2>Work Area vs Dictionary</h2>
+    <p>A work area usually represents one record. A Python dictionary can serve the same purpose.</p>
+    <div class="side-by-side">
+        <div><h3>ABAP</h3><div class="code-block">DATA: ls_material TYPE mara.
+
+ls_material-matnr = '10000001'.
+ls_material-maktx = 'Demo Material'.</div></div>
+        <div><h3>Python</h3><div class="code-block">material = {
+    "matnr": "10000001",
+    "maktx": "Demo Material"
+}</div></div>
+    </div>
+    <div class="callout info"><strong>ABAP Mindset:</strong> Think of a dictionary as a lightweight structure where each field has a name and a value.</div>
+</div>
+
+<div class="section">
+    <h2>SELECT Statements: You Have More Than One Python Path</h2>
+    <p>The first version of this chapter jumped from ABAP SELECT statements straight to APIs. That is a valid modern path, but it is not the only path. Many developers first need to understand how Python reads data from familiar places: databases, CSV files, Excel files, and then APIs.</p>
+    <div class="callout success"><strong>Better mental model:</strong> ABAP usually reads data from SAP tables. Python reads data from wherever the data lives.</div>
+</div>
+
+<div class="section">
+    <h2>Path A: ABAP SELECT vs Python SELECT from PostgreSQL</h2>
+    <p>If you are not ready to think in APIs yet, start with a relational database. The idea is familiar: connect, run SQL, receive rows, display or process the result.</p>
+    <div class="side-by-side">
+        <div><h3>ABAP</h3><div class="code-block">DATA: lt_materials TYPE TABLE OF mara.
+
+SELECT matnr, mtart, matkl
+  FROM mara
+  INTO TABLE @lt_materials
+  UP TO 100 ROWS.</div></div>
+        <div><h3>Python + PostgreSQL</h3><div class="code-block">import psycopg2
+
+connection = psycopg2.connect(
+    host="localhost",
+    database="demo",
+    user="postgres",
+    password="your_password"
+)
+
+cursor = connection.cursor()
+
+cursor.execute(
+    "SELECT matnr, mtart, matkl "
+    "FROM materials "
+    "LIMIT 100"
+)
+
+rows = cursor.fetchall()
+
+for row in rows:
+    print(row)
+
+cursor.close()
+connection.close()</div></div>
+    </div>
+    <button class="accordion">What package would I install?</button>
+    <div class="panel"><p>For PostgreSQL, one common package is <strong>psycopg2</strong>.</p><div class="code-block">python -m pip install psycopg2-binary</div><p>In production environments, your team may prefer a specific driver or SQLAlchemy, but this is enough to understand the basic idea.</p></div>
+    <button class="accordion">What is the ABAP translation?</button>
+    <div class="panel"><p>The <strong>connection</strong> is the database session. The <strong>cursor</strong> is the object that sends the SQL and receives the result. The <strong>rows</strong> are your internal table equivalent.</p></div>
+</div>
+
+<div class="section">
+    <h2>Path B: ABAP SELECT vs Python SELECT with pandas</h2>
+    <p>For reporting work, pandas is often more convenient because it gives you a table-like object called a DataFrame. This feels closer to working with an internal table that also has built-in analysis functions.</p>
+    <div class="side-by-side">
+        <div><h3>ABAP</h3><div class="code-block">SELECT matnr, mtart, matkl
+  FROM mara
+  INTO TABLE @DATA(lt_materials)
+  UP TO 100 ROWS.</div></div>
+        <div><h3>Python + pandas</h3><div class="code-block">import pandas as pd
+import psycopg2
+
+connection = psycopg2.connect(
+    host="localhost",
+    database="demo",
+    user="postgres",
+    password="your_password"
+)
+
+sql = (
+    "SELECT matnr, mtart, matkl "
+    "FROM materials "
+    "LIMIT 100"
+)
+
+df = pd.read_sql(sql, connection)
+
+print(df.head())
+
+connection.close()</div></div>
+    </div>
+    <div class="callout info"><strong>Python Translation:</strong> A pandas DataFrame is not exactly an internal table, but for reporting and analysis, it will often feel like your most natural bridge from ABAP.</div>
+</div>
+
+<div class="section">
+    <h2>Path C: Reading CSV or Excel Instead of a Database</h2>
+    <p>Many useful Python tools start with exported data. Maybe someone gives you a CSV file, an Excel workbook, or a flat file from another system. You can still build something valuable without connecting directly to SAP or another database.</p>
+    <div class="three-col">
+        <div><h3>CSV</h3><div class="code-block">import pandas as pd
+
+df = pd.read_csv("materials.csv")
+
+print(df.head())</div></div>
+        <div><h3>Excel</h3><div class="code-block">import pandas as pd
+
+df = pd.read_excel("materials.xlsx")
+
+print(df.head())</div></div>
+        <div><h3>Filter</h3><div class="code-block">fert = df[df["mtart"] == "FERT"]
+
+print(fert)</div></div>
+    </div>
+    <button class="accordion">Why this is a great beginner path</button>
+    <div class="panel"><p>You can practice Python reporting without dealing with credentials, firewalls, SAP authorizations, or network access. That makes CSV and Excel perfect for early projects.</p></div>
+</div>
+
+<div class="section">
+    <h2>Path D: SELECT vs API</h2>
+    <p>Once you are comfortable with files and databases, APIs become easier to understand. Instead of selecting from a table, you request data from an endpoint.</p>
+    <div class="side-by-side">
+        <div><h3>ABAP</h3><div class="code-block">SELECT matnr, mtart, matkl
+  FROM mara
+  INTO TABLE @DATA(lt_materials)
+  UP TO 100 ROWS.</div></div>
+        <div><h3>Python + API</h3><div class="code-block">import requests
+
+url = "https://example.com/api/materials"
+
+response = requests.get(url)
+response.raise_for_status()
+
+materials = response.json()
+
+for material in materials:
+    print(material["matnr"])</div></div>
+    </div>
+    <button class="accordion">Important Shift</button>
+    <div class="panel"><p>With an API, you usually do not control the SQL. The service decides what data is available, how it is filtered, and how it is returned. Your Python program becomes the consumer of that service.</p></div>
+</div>
+
+<div class="section">
+    <h2>Looping Through Data</h2>
+    <p>Looping is one of the easiest concepts to translate.</p>
+    <div class="side-by-side">
+        <div><h3>ABAP</h3><div class="code-block">LOOP AT lt_materials INTO DATA(ls_material).
+  WRITE: / ls_material-matnr,
+           ls_material-mtart.
+ENDLOOP.</div></div>
+        <div><h3>Python</h3><div class="code-block">for material in materials:
+    print(material["matnr"], material["mtart"])</div></div>
+    </div>
+    <div class="callout warning"><strong>Common mistake:</strong> Python indentation matters. In ABAP, keywords close your blocks. In Python, indentation defines the block.</div>
+</div>
+
+<div class="section">
+    <h2>IF Conditions</h2>
+    <p>Conditional logic is also very similar once you get used to Python syntax.</p>
+    <div class="side-by-side">
+        <div><h3>ABAP</h3><div class="code-block">IF ls_material-mtart = 'FERT'.
+  WRITE: / 'Finished product'.
+ELSE.
+  WRITE: / 'Other material'.
+ENDIF.</div></div>
+        <div><h3>Python</h3><div class="code-block">if material["mtart"] == "FERT":
+    print("Finished product")
+else:
+    print("Other material")</div></div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Functions: FORM, Function Module, or Method?</h2>
+    <p>Python functions are small reusable blocks of logic. Do not make this more complicated than it needs to be at first.</p>
+    <div class="side-by-side">
+        <div><h3>ABAP</h3><div class="code-block">FORM format_material USING iv_matnr TYPE matnr
+                     CHANGING cv_text TYPE string.
+
+  cv_text = |Material: { iv_matnr }|.
+
+ENDFORM.</div></div>
+        <div><h3>Python</h3><div class="code-block">def format_material(matnr):
+    return f"Material: {matnr}"
+
+text = format_material("10000001")
+print(text)</div></div>
+    </div>
+    <div class="callout info"><strong>Python Translation:</strong> Start with functions. Later, when your project grows, you can move into modules, classes, and packages.</div>
+</div>
+
+<div class="section">
+    <h2>ALV vs Bokeh</h2>
+    <p>ABAP developers love ALV because it gives users a usable table quickly. Python does not have ALV, but it has several ways to create interactive output. For this book, our first ALV-like path will use Bokeh.</p>
+    <div class="side-by-side">
+        <div><h3>ABAP ALV</h3><div class="code-block">CALL FUNCTION 'REUSE_ALV_GRID_DISPLAY'
+  EXPORTING
+    i_structure_name = 'MARA'
+  TABLES
+    t_outtab = lt_materials.</div></div>
+        <div><h3>Python Bokeh DataTable</h3><div class="code-block">from bokeh.models import ColumnDataSource, DataTable, TableColumn
+from bokeh.io import show
+
+source = ColumnDataSource(df)
+
+columns = [
+    TableColumn(field="matnr", title="Material"),
+    TableColumn(field="mtart", title="Material Type"),
+    TableColumn(field="matkl", title="Material Group")
+]
+
+table = DataTable(source=source, columns=columns, width=800)
+show(table)</div></div>
+    </div>
+    <button class="accordion">Why Bokeh for the first project?</button>
+    <div class="panel"><p>Bokeh can create interactive browser-based output without requiring a full web application at the beginning. That makes it a friendly bridge from classic report output to modern dashboard output.</p></div>
+</div>
+
+<div class="section">
+    <h2>Mini Exercise: Translate This in Your Head</h2>
+    <p>Before going to the first full project, try to mentally translate this ABAP pattern:</p>
+    <div class="code-block">SELECT matnr, mtart
+  FROM mara
+  INTO TABLE @DATA(lt_materials)
+  WHERE mtart = 'FERT'.
+
+LOOP AT lt_materials INTO DATA(ls_material).
+  WRITE: / ls_material-matnr.
+ENDLOOP.</div>
+
+    <button class="accordion">One possible Python version using pandas</button>
+    <div class="panel"><div class="code-block">import pandas as pd
+
+df = pd.read_csv("materials.csv")
+
+fert_materials = df[df["mtart"] == "FERT"]
+
+for _, material in fert_materials.iterrows():
+    print(material["matnr"])</div></div>
+
+    <div class="callout success"><strong>Checkpoint:</strong> You do not need to memorize every package yet. You only need to understand the shape of the translation: read data, store it in a table-like structure, filter it, loop through it, and display it.</div>
+</div>
+
+<div class="section">
+    <h2>Chapter 1 Checkpoint</h2>
+    <ul>
+        <li>You understand that Python can read from databases, files, and APIs.</li>
+        <li>You can compare an ABAP internal table to a Python list of dictionaries or pandas DataFrame.</li>
+        <li>You can compare a work area to a dictionary.</li>
+        <li>You understand why pandas will be useful for SAP-style reporting.</li>
+        <li>You understand why Bokeh is a good first replacement for simple ALV-style output.</li>
+    </ul>
+    <div class="callout success"><strong>Next:</strong> In Chapter 2, we build the first useful project: an ABAP-style material table report rebuilt in Python with pandas and Bokeh.</div>
+</div>
+
+<p class="footer-note">Think Like Python: A Guide for ABAP Developers — Chapter 1</p>
+
+</div>
+
+<script>
+var acc = document.getElementsByClassName("accordion");
+for (var i = 0; i < acc.length; i++) {
+  acc[i].onclick = function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  }
+}
+</script>
+
+
+<div class="book-nav" style="position: static; margin-top: 30px;">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">End of Chapter 1</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-00-getting-your-python-workbench-ready.html">Previous</a><a href="chapter-02-first-project-alv-to-python.html">Next</a></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  © 2026 Edwin A. Rodriguez — Think Like Python. All rights reserved.
+</footer>
+
+</body>
+</html>

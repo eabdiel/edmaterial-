@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 6 - Make the Flask Report Useful</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+    --navy: #0b1f3a;
+    --navy-soft: #12345f;
+    --teal: #13a89e;
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --text: #2d3748;
+    --muted: #64748b;
+    --code-bg: #1e1e1e;
+    --code-text: #f8f8f2;
+    --info-bg: #ecfeff;
+    --info-border: #06b6d4;
+    --warning-bg: #fff7ed;
+    --warning-border: #fb923c;
+    --success-bg: #f0fdf4;
+    --success-border: #22c55e;
+    --line: #dbeafe;
+}
+* { box-sizing: border-box; }
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+header {
+    background: linear-gradient(135deg, var(--navy), var(--navy-soft));
+    color: white;
+    padding: 48px 24px;
+    text-align: center;
+}
+header h1 { margin: 0; font-size: 2.25rem; }
+header p { color: #dbeafe; margin-top: 10px; }
+.container { max-width: 1180px; margin: auto; padding: 32px 20px 60px; }
+.section {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+h2, h3 { color: var(--navy); }
+h2 { margin-top: 0; }
+.badge {
+    display: inline-block;
+    background: var(--teal);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.code-block {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 16px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 0.92rem;
+    white-space: pre;
+}
+.callout { padding: 16px; border-radius: 10px; margin: 18px 0; }
+.callout.info { background: var(--info-bg); border-left: 5px solid var(--info-border); }
+.callout.warning { background: var(--warning-bg); border-left: 5px solid var(--warning-border); }
+.callout.success { background: var(--success-bg); border-left: 5px solid var(--success-border); }
+.side-by-side { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 14px; }
+.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.workflow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    align-items: stretch;
+    margin: 22px 0 6px;
+}
+.step {
+    background: #eef6ff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    position: relative;
+}
+.step strong { display: block; color: var(--navy); margin-bottom: 6px; }
+.step span { color: var(--muted); font-size: 0.9rem; }
+.step:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    right: -13px;
+    top: 40%;
+    color: var(--navy-soft);
+    font-weight: bold;
+}
+.mock-window {
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    margin-top: 14px;
+}
+.mock-title {
+    background: #e2e8f0;
+    padding: 10px 14px;
+    color: var(--navy);
+    font-weight: bold;
+    font-size: 0.92rem;
+}
+.mock-body { padding: 16px; }
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+}
+.preview-table th {
+    background: #e8eef7;
+    color: var(--navy);
+    text-align: left;
+}
+.preview-table th, .preview-table td {
+    border: 1px solid var(--line);
+    padding: 9px;
+}
+.fake-button {
+    display: inline-block;
+    margin: 8px 8px 8px 0;
+    background: var(--teal);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+.fake-button.secondary {
+    background: var(--navy-soft);
+}
+.metric-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 16px;
+}
+.metric {
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+}
+.metric strong {
+    display: block;
+    color: var(--navy);
+    font-size: 1.4rem;
+}
+.chart {
+    height: 230px;
+    border-left: 2px solid #334155;
+    border-bottom: 2px solid #334155;
+    display: flex;
+    align-items: flex-end;
+    gap: 26px;
+    padding: 16px 20px 0;
+    margin: 20px 0 4px;
+}
+.bar-wrap { text-align: center; flex: 1; }
+.bar {
+    background: linear-gradient(180deg, #13a89e, #0b1f3a);
+    border-radius: 8px 8px 0 0;
+    margin: auto;
+    width: 70%;
+}
+.bar-label { margin-top: 8px; font-size: 0.86rem; color: var(--muted); }
+.bar-value { color: var(--navy); font-weight: bold; font-size: 0.88rem; }
+.file-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+    background: #f8fafc;
+}
+.file-icon { font-size: 2rem; margin-bottom: 8px; }
+.accordion {
+    cursor: pointer;
+    padding: 16px 18px;
+    width: 100%;
+    border: 1px solid var(--line);
+    text-align: left;
+    outline: none;
+    background-color: #e8eef7;
+    color: var(--navy);
+    margin-top: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+.accordion:hover { background-color: #dbeafe; }
+.panel {
+    padding: 0 18px 18px;
+    display: none;
+    background-color: white;
+    border: 1px solid #edf2f7;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+}
+.footer-note {
+    color: var(--muted);
+    font-size: 0.95rem;
+    text-align: center;
+    margin-top: 30px;
+}
+@media (max-width: 900px) {
+    .side-by-side, .three-col, .workflow, .metric-row { grid-template-columns: 1fr; }
+    .step:not(:last-child)::after {
+        content: "↓";
+        right: 50%;
+        top: auto;
+        bottom: -18px;
+    }
+}
+
+.book-nav {
+    background: #ffffff;
+    border-bottom: 1px solid #d9e2ec;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+.book-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.book-nav-title {
+    color: #0b1f3a;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+.book-nav-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.book-nav a {
+    color: #0b1f3a;
+    text-decoration: none;
+    border: 1px solid #c8d4e3;
+    background: #f8fafc;
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 0.92rem;
+}
+.book-nav a:hover {
+    background: #e8eef7;
+}
+.book-nav a.primary-link {
+    background: #0b1f3a;
+    color: #ffffff;
+    border-color: #0b1f3a;
+}
+.chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+.chapter-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.06);
+}
+.chapter-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(11,31,58,0.12);
+}
+.chapter-card .eyebrow {
+    color: #13a89e;
+    font-weight: 700;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.chapter-card h3 {
+    margin: 8px 0;
+    color: #0b1f3a;
+}
+.chapter-card p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+@media (max-width: 700px) {
+    .book-nav-inner { align-items: flex-start; }
+    .book-nav-links { width: 100%; }
+    .book-nav a { flex: 1 1 auto; text-align: center; }
+}
+
+
+.site-footer {
+    text-align: center;
+    margin: 42px auto 24px;
+    padding: 18px 20px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+</style>
+</head>
+
+<body>
+<nav class="book-nav" aria-label="Book navigation">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">Think Like Python</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-05-give-it-a-web-interface.html">Previous</a><a href="chapter-07-btp-cloud-foundry.html">Next</a></div>
+  </div>
+</nav>
+
+
+<header>
+    <h1>Chapter 6: Make the Flask Report Useful</h1>
+    <p>Adding cleaner layout, summaries, charts, and Excel download to your web report</p>
+</header>
+
+<div class="container">
+
+<div class="section">
+    <span class="badge">Chapter Goal</span>
+    <h2>From Web Demo to Practical Reporting App</h2>
+    <p>
+        Chapter 5 gave the report a browser form. That was a major step because users no longer needed to run commands.
+        But the app still felt basic.
+    </p>
+    <p>
+        In this chapter, we improve the Flask app so it starts feeling like something you could share with another developer
+        or demo to a business user.
+    </p>
+
+    <div class="workflow">
+        <div class="step"><strong>Form</strong><span>User selects filters</span></div>
+        <div class="step"><strong>Summary</strong><span>Show record counts</span></div>
+        <div class="step"><strong>Table</strong><span>Display filtered data</span></div>
+        <div class="step"><strong>Chart</strong><span>Visual pattern</span></div>
+        <div class="step"><strong>Download</strong><span>Export Excel</span></div>
+    </div>
+
+    <div class="callout success">
+        <strong>Big idea:</strong> A useful tool does not only show data. It helps the user understand, trust, and reuse the result.
+    </div>
+</div>
+
+<div class="section">
+    <h2>What We Are Building</h2>
+    <p>
+        We will keep the same material report, but add four practical improvements:
+    </p>
+
+    <div class="three-col">
+        <div class="file-card">
+            <div class="file-icon">📌</div>
+            <strong>Summary Cards</strong>
+            <p>Total filtered records, total stock, and selected filters.</p>
+        </div>
+        <div class="file-card">
+            <div class="file-icon">📊</div>
+            <strong>Simple Chart</strong>
+            <p>A visual count by material type or plant.</p>
+        </div>
+        <div class="file-card">
+            <div class="file-icon">⬇️</div>
+            <strong>Excel Download</strong>
+            <p>A browser button to download filtered results.</p>
+        </div>
+    </div>
+
+    <h3>Expected browser preview</h3>
+    <div class="mock-window">
+        <div class="mock-title">Material Report App</div>
+        <div class="mock-body">
+            <span class="fake-button">Generate Report</span>
+            <span class="fake-button secondary">Download Excel</span>
+
+            <div class="metric-row">
+                <div class="metric"><strong>2</strong><span>Filtered Records</span></div>
+                <div class="metric"><strong>112</strong><span>Total Stock</span></div>
+                <div class="metric"><strong>FERT / 1000</strong><span>Selected Filters</span></div>
+            </div>
+
+            <table class="preview-table">
+                <tr><th>Material</th><th>Description</th><th>Type</th><th>Plant</th><th>Stock</th></tr>
+                <tr><td>1006</td><td>Demo Finished Product 3</td><td>FERT</td><td>1000</td><td>67</td></tr>
+                <tr><td>1001</td><td>Demo Finished Product</td><td>FERT</td><td>1000</td><td>45</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Updated Project Structure</h2>
+    <p>
+        We will add a folder for generated reports and a static CSS file. This keeps the app cleaner.
+    </p>
+
+    <div class="code-block">think-like-python-flask-report/
+│
+├── app.py
+├── materials.csv
+├── requirements.txt
+│
+├── generated/
+│   └── filtered_materials.xlsx       ← created by the app
+│
+├── static/
+│   └── style.css
+│
+└── templates/
+    └── index.html</div>
+
+    <div class="callout info">
+        <strong>ABAP comparison:</strong> This is like moving from one giant report include into a cleaner structure:
+        program logic, layout, output files, and reusable styling.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 1: Add the Generated Folder</h2>
+    <p>
+        The app needs a safe place to store the Excel file before downloading it.
+    </p>
+
+    <div class="code-block">generated/</div>
+
+    <p>
+        We will also make the app create this folder automatically if it does not exist.
+    </p>
+
+    <div class="code-block">import os
+
+GENERATED_FOLDER = "generated"
+
+os.makedirs(GENERATED_FOLDER, exist_ok=True)</div>
+
+    <button class="accordion">Why create the folder in code?</button>
+    <div class="panel">
+        <p>
+            It makes the app more forgiving. If another developer downloads your project and forgets to create the folder,
+            the app still works.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 2: Add a Download Route</h2>
+    <p>
+        A Flask route can return a page, but it can also return a file. This is how we create the Excel download button.
+    </p>
+
+    <div class="code-block">from flask import send_file
+
+@app.route("/download")
+def download():
+    file_path = os.path.join(GENERATED_FOLDER, "filtered_materials.xlsx")
+    return send_file(file_path, as_attachment=True)</div>
+
+    <div class="callout warning">
+        <strong>Beginner caution:</strong> This simple version assumes the Excel file already exists. Later, you can add checks
+        so users get a friendly message if they try to download before generating a report.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 3: Add Summary Metrics</h2>
+    <p>
+        Summary metrics help the user quickly understand the report without scanning every row.
+    </p>
+
+    <div class="side-by-side">
+        <div>
+            <h3>Python summary logic</h3>
+            <div class="code-block">record_count = len(filtered_df)
+total_stock = int(filtered_df["stock"].sum())
+
+summary = {
+    "record_count": record_count,
+    "total_stock": total_stock,
+    "selected_filters": f"{material_type} / {plant}"
+}</div>
+        </div>
+        <div>
+            <h3>Expected visual result</h3>
+            <div class="mock-window">
+                <div class="mock-title">Summary Cards</div>
+                <div class="mock-body">
+                    <div class="metric-row">
+                        <div class="metric"><strong>2</strong><span>Filtered Records</span></div>
+                        <div class="metric"><strong>112</strong><span>Total Stock</span></div>
+                        <div class="metric"><strong>FERT / 1000</strong><span>Selected Filters</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="accordion">Why add summaries?</button>
+    <div class="panel">
+        <p>
+            In many business reports, the first question is not “what are all the rows?” It is “how many records are we talking about?”
+            or “does this output look reasonable?” Summary cards help establish that trust quickly.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 4: Add a Simple HTML Chart</h2>
+    <p>
+        In a full app, you might use Bokeh, Plotly, Chart.js, or another visualization library.
+        For this beginner web chapter, we will keep the chart simple and render basic bars using HTML and CSS.
+    </p>
+
+    <div class="code-block">chart_data = (
+    filtered_df["mtart"]
+    .value_counts()
+    .reset_index()
+)
+
+chart_data.columns = ["label", "value"]
+chart_records = chart_data.to_dict(orient="records")</div>
+
+    <h3>Expected chart preview</h3>
+    <div class="mock-window">
+        <div class="mock-title">Filtered Material Count by Type</div>
+        <div class="mock-body">
+            <div class="chart">
+                <div class="bar-wrap">
+                    <div class="bar" style="height: 180px;"></div>
+                    <div class="bar-value">2</div>
+                    <div class="bar-label">FERT</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="callout info">
+        <strong>Why not Bokeh here?</strong> We already introduced Bokeh earlier. This chapter focuses on Flask mechanics:
+        routes, templates, downloads, and passing data to HTML.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Full Updated app.py</h2>
+    <p>
+        Replace your previous <strong>app.py</strong> with this version.
+    </p>
+
+    <div class="code-block">import os
+from flask import Flask, render_template, request, send_file
+import pandas as pd
+
+app = Flask(__name__)
+
+DATA_FILE = "materials.csv"
+GENERATED_FOLDER = "generated"
+EXCEL_FILE = "filtered_materials.xlsx"
+
+os.makedirs(GENERATED_FOLDER, exist_ok=True)
+
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    df = pd.read_csv(DATA_FILE)
+
+    material_type = "FERT"
+    plant = "1000"
+
+    records = []
+    chart_records = []
+    summary = None
+    message = ""
+
+    if request.method == "POST":
+        material_type = request.form.get("material_type", "FERT")
+        plant = request.form.get("plant", "1000")
+
+        filtered_df = df[
+            (df["mtart"] == material_type) &
+            (df["plant"].astype(str) == plant)
+        ]
+
+        filtered_df = filtered_df.sort_values(by="stock", ascending=False)
+
+        if filtered_df.empty:
+            message = "No records found for the selected filters."
+        else:
+            records = filtered_df.to_dict(orient="records")
+
+            summary = {
+                "record_count": len(filtered_df),
+                "total_stock": int(filtered_df["stock"].sum()),
+                "selected_filters": f"{material_type} / {plant}"
+            }
+
+            chart_data = (
+                filtered_df["mtart"]
+                .value_counts()
+                .reset_index()
+            )
+
+            chart_data.columns = ["label", "value"]
+            chart_records = chart_data.to_dict(orient="records")
+
+            output_path = os.path.join(GENERATED_FOLDER, EXCEL_FILE)
+            filtered_df.to_excel(output_path, index=False)
+
+            message = f"Found {len(records)} record(s)."
+
+    return render_template(
+        "index.html",
+        material_type=material_type,
+        plant=plant,
+        records=records,
+        chart_records=chart_records,
+        summary=summary,
+        message=message
+    )
+
+
+@app.route("/download")
+def download():
+    file_path = os.path.join(GENERATED_FOLDER, EXCEL_FILE)
+
+    if not os.path.exists(file_path):
+        return "No Excel file has been generated yet. Please run a report first."
+
+    return send_file(file_path, as_attachment=True)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)</div>
+
+    <button class="accordion">What changed from Chapter 5?</button>
+    <div class="panel">
+        <ul>
+            <li>We added <strong>send_file</strong> for Excel downloads.</li>
+            <li>We added a <strong>generated</strong> folder for output files.</li>
+            <li>We calculated summary metrics.</li>
+            <li>We prepared chart data for the template.</li>
+            <li>We added a <strong>/download</strong> route.</li>
+        </ul>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Full Updated templates/index.html</h2>
+    <p>
+        Replace your previous <strong>templates/index.html</strong> with this version.
+    </p>
+
+    <div class="code-block">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Material Report&lt;/title&gt;
+    &lt;link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;div class="container"&gt;
+
+    &lt;h1&gt;Material Report&lt;/h1&gt;
+    &lt;p&gt;Select your filters and generate the report.&lt;/p&gt;
+
+    &lt;form method="POST"&gt;
+        &lt;label&gt;Material Type&lt;/label&gt;
+        &lt;select name="material_type"&gt;
+            &lt;option value="FERT"&gt;FERT&lt;/option&gt;
+            &lt;option value="HALB"&gt;HALB&lt;/option&gt;
+            &lt;option value="ROH"&gt;ROH&lt;/option&gt;
+            &lt;option value="HAWA"&gt;HAWA&lt;/option&gt;
+        &lt;/select&gt;
+
+        &lt;label&gt;Plant&lt;/label&gt;
+        &lt;input name="plant" value="{{ plant }}"&gt;
+
+        &lt;button type="submit"&gt;Generate Report&lt;/button&gt;
+    &lt;/form&gt;
+
+    {% if message %}
+        &lt;div class="message"&gt;{{ message }}&lt;/div&gt;
+    {% endif %}
+
+    {% if summary %}
+        &lt;div class="summary-grid"&gt;
+            &lt;div class="summary-card"&gt;
+                &lt;strong&gt;{{ summary.record_count }}&lt;/strong&gt;
+                &lt;span&gt;Filtered Records&lt;/span&gt;
+            &lt;/div&gt;
+
+            &lt;div class="summary-card"&gt;
+                &lt;strong&gt;{{ summary.total_stock }}&lt;/strong&gt;
+                &lt;span&gt;Total Stock&lt;/span&gt;
+            &lt;/div&gt;
+
+            &lt;div class="summary-card"&gt;
+                &lt;strong&gt;{{ summary.selected_filters }}&lt;/strong&gt;
+                &lt;span&gt;Selected Filters&lt;/span&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;p&gt;
+            &lt;a class="download-button" href="/download"&gt;Download Excel&lt;/a&gt;
+        &lt;/p&gt;
+    {% endif %}
+
+    {% if chart_records %}
+        &lt;h2&gt;Material Count by Type&lt;/h2&gt;
+        &lt;div class="chart-box"&gt;
+            {% for item in chart_records %}
+                &lt;div class="bar-row"&gt;
+                    &lt;span class="bar-label"&gt;{{ item.label }}&lt;/span&gt;
+                    &lt;div class="bar-track"&gt;
+                        &lt;div class="bar-fill" style="width: {{ item.value * 25 }}%;"&gt;
+                            {{ item.value }}
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            {% endfor %}
+        &lt;/div&gt;
+    {% endif %}
+
+    {% if records %}
+        &lt;h2&gt;Filtered Records&lt;/h2&gt;
+        &lt;table&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Material&lt;/th&gt;
+                &lt;th&gt;Description&lt;/th&gt;
+                &lt;th&gt;Type&lt;/th&gt;
+                &lt;th&gt;Plant&lt;/th&gt;
+                &lt;th&gt;Stock&lt;/th&gt;
+            &lt;/tr&gt;
+
+            {% for row in records %}
+            &lt;tr&gt;
+                &lt;td&gt;{{ row.matnr }}&lt;/td&gt;
+                &lt;td&gt;{{ row.maktx }}&lt;/td&gt;
+                &lt;td&gt;{{ row.mtart }}&lt;/td&gt;
+                &lt;td&gt;{{ row.plant }}&lt;/td&gt;
+                &lt;td&gt;{{ row.stock }}&lt;/td&gt;
+            &lt;/tr&gt;
+            {% endfor %}
+        &lt;/table&gt;
+    {% endif %}
+
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</div>
+
+    <button class="accordion">What is url_for?</button>
+    <div class="panel">
+        <p>
+            <strong>url_for('static', filename='style.css')</strong> asks Flask to build the correct URL for the CSS file.
+            This is better than hardcoding a path.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Add static/style.css</h2>
+    <p>
+        Create a folder named <strong>static</strong>, then create a file named <strong>style.css</strong>.
+    </p>
+
+    <div class="code-block">body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 30px;
+    color: #2d3748;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+}
+
+h1, h2 {
+    color: #0b1f3a;
+}
+
+label {
+    display: block;
+    margin-top: 12px;
+    font-weight: bold;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 4px;
+}
+
+button, .download-button {
+    display: inline-block;
+    margin-top: 18px;
+    background: #13a89e;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.message {
+    margin-top: 18px;
+    background: #ecfeff;
+    border-left: 5px solid #06b6d4;
+    padding: 12px;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.summary-card {
+    background: #f8fafc;
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    padding: 14px;
+}
+
+.summary-card strong {
+    display: block;
+    color: #0b1f3a;
+    font-size: 1.4rem;
+}
+
+.chart-box {
+    margin-top: 12px;
+}
+
+.bar-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.bar-track {
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    background: #13a89e;
+    color: white;
+    padding: 6px 10px;
+    min-width: 35px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 22px;
+}
+
+th, td {
+    border: 1px solid #dbeafe;
+    padding: 9px;
+    text-align: left;
+}
+
+th {
+    background: #e8eef7;
+    color: #0b1f3a;
+}</div>
+
+    <div class="callout info">
+        <strong>Why separate CSS?</strong> It keeps your Python logic and page design from becoming tangled together.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Run and Test</h2>
+    <p>
+        Start the app:
+    </p>
+
+    <div class="code-block">python app.py</div>
+
+    <p>
+        Open:
+    </p>
+
+    <div class="code-block">http://127.0.0.1:5000</div>
+
+    <h3>Test path</h3>
+    <div class="workflow">
+        <div class="step"><strong>Open</strong><span>Local URL</span></div>
+        <div class="step"><strong>Submit</strong><span>FERT / 1000</span></div>
+        <div class="step"><strong>Review</strong><span>Summary + table</span></div>
+        <div class="step"><strong>Download</strong><span>Excel file</span></div>
+        <div class="step"><strong>Verify</strong><span>Open workbook</span></div>
+    </div>
+
+    <div class="mock-window">
+        <div class="mock-title">What success looks like</div>
+        <div class="mock-body">
+            <ul>
+                <li>The browser shows summary cards.</li>
+                <li>The browser shows a simple chart.</li>
+                <li>The table shows filtered rows.</li>
+                <li>The Download Excel button downloads <strong>filtered_materials.xlsx</strong>.</li>
+                <li>The terminal does not show errors.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Common Beginner Issues</h2>
+
+    <button class="accordion">Problem: The CSS does not load</button>
+    <div class="panel">
+        <p>
+            Confirm the file is located here:
+        </p>
+        <div class="code-block">static/style.css</div>
+        <p>
+            Also confirm this line exists in the HTML head:
+        </p>
+        <div class="code-block">&lt;link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"&gt;</div>
+    </div>
+
+    <button class="accordion">Problem: Download button says no file exists</button>
+    <div class="panel">
+        <p>
+            Generate a report first. The Excel file is created only after the app has filtered data.
+        </p>
+    </div>
+
+    <button class="accordion">Problem: The chart bar looks too wide</button>
+    <div class="panel">
+        <p>
+            In this beginner version, bar width is calculated with a simple multiplier:
+        </p>
+        <div class="code-block">style="width: {{ item.value * 25 }}%;"</div>
+        <p>
+            Later, you can normalize values so chart widths scale more accurately.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Try This</h2>
+    <ul>
+        <li>Add a summary card for average stock.</li>
+        <li>Add a chart grouped by plant instead of material type.</li>
+        <li>Rename the downloaded file to include the selected plant.</li>
+        <li>Add a timestamp to the page showing when the report was generated.</li>
+        <li>Add a reset button that returns the form to default values.</li>
+    </ul>
+
+    <button class="accordion">Stretch goal: timestamp</button>
+    <div class="panel">
+        <p>Add this in <strong>app.py</strong>:</p>
+        <div class="code-block">from datetime import datetime
+
+generated_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")</div>
+        <p>Then pass it into <strong>render_template()</strong> and display it in the HTML.</p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Chapter 6 Checkpoint</h2>
+    <ul>
+        <li>You can create generated output folders from Python.</li>
+        <li>You can create an Excel file from filtered data.</li>
+        <li>You can add a Flask download route.</li>
+        <li>You can pass summary metrics to an HTML template.</li>
+        <li>You can create a simple visual chart using HTML and CSS.</li>
+        <li>You can separate styling into a static CSS file.</li>
+    </ul>
+
+    <div class="callout success">
+        <strong>Next:</strong> Chapter 7 can prepare this app for cloud deployment by introducing environment variables,
+        requirements, a Procfile, and a Cloud Foundry-ready structure.
+    </div>
+</div>
+
+<p class="footer-note">
+    Think Like Python: A Guide for ABAP Developers — Chapter 6
+</p>
+
+</div>
+
+<script>
+var acc = document.getElementsByClassName("accordion");
+for (var i = 0; i < acc.length; i++) {
+  acc[i].onclick = function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  }
+}
+</script>
+
+
+<div class="book-nav" style="position: static; margin-top: 30px;">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">End of Chapter 6</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-05-give-it-a-web-interface.html">Previous</a><a href="chapter-07-btp-cloud-foundry.html">Next</a></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  © 2026 Edwin A. Rodriguez — Think Like Python. All rights reserved.
+</footer>
+
+</body>
+</html>

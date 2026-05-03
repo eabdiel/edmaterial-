@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 8 - APIs (Guided Project)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{font-family:Arial;margin:0;background:#f4f6f8;color:#333}
+header{background:#0b1f3a;color:#fff;padding:40px;text-align:center}
+.container{max-width:1100px;margin:auto;padding:30px}
+.section{background:#fff;padding:25px;margin-bottom:20px;border-radius:10px}
+h2{color:#0b1f3a}
+.code{background:#1e1e1e;color:#f8f8f2;padding:12px;border-radius:8px;white-space:pre}
+.mock{background:#fff;border:1px solid #ccc;border-radius:8px;padding:15px;margin-top:10px}
+.callout{background:#eef6ff;padding:15px;border-left:5px solid #13a89e;margin:15px 0}
+.table{width:100%;border-collapse:collapse;margin-top:10px}
+.table th,.table td{border:1px solid #ccc;padding:8px}
+
+.book-nav {
+    background: #ffffff;
+    border-bottom: 1px solid #d9e2ec;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+.book-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.book-nav-title {
+    color: #0b1f3a;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+.book-nav-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.book-nav a {
+    color: #0b1f3a;
+    text-decoration: none;
+    border: 1px solid #c8d4e3;
+    background: #f8fafc;
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 0.92rem;
+}
+.book-nav a:hover {
+    background: #e8eef7;
+}
+.book-nav a.primary-link {
+    background: #0b1f3a;
+    color: #ffffff;
+    border-color: #0b1f3a;
+}
+.chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+.chapter-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.06);
+}
+.chapter-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(11,31,58,0.12);
+}
+.chapter-card .eyebrow {
+    color: #13a89e;
+    font-weight: 700;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.chapter-card h3 {
+    margin: 8px 0;
+    color: #0b1f3a;
+}
+.chapter-card p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+@media (max-width: 700px) {
+    .book-nav-inner { align-items: flex-start; }
+    .book-nav-links { width: 100%; }
+    .book-nav a { flex: 1 1 auto; text-align: center; }
+}
+
+
+.site-footer {
+    text-align: center;
+    margin: 42px auto 24px;
+    padding: 18px 20px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+</style>
+</head>
+<body>
+<nav class="book-nav" aria-label="Book navigation">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">Think Like Python</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-07-btp-cloud-foundry.html">Previous</a><a href="chapter-09-ocr-flagship.html">Next</a></div>
+  </div>
+</nav>
+
+
+<header>
+<h1>Chapter 8: Talking to SAP via APIs (Hands-On Project)</h1>
+<p>Build your first API-powered SAP-style report</p>
+</header>
+
+<div class="container">
+
+<div class="section">
+<h2>Project Goal</h2>
+<p>We will simulate pulling SAP material data via an API and displaying it like an ALV report.</p>
+
+<div class="callout">
+Instead of explaining APIs, we will BUILD one workflow step-by-step.
+</div>
+</div>
+
+<div class="section">
+<h2>Step 1: Run Your First API Script</h2>
+
+<div class="code">import requests
+
+url = "https://jsonplaceholder.typicode.com/posts"
+
+response = requests.get(url)
+
+data = response.json()
+
+print(data[:2])</div>
+
+<h3>What you should see</h3>
+<div class="mock">
+[
+ { "userId": 1, "id": 1, "title": "...", "body": "..." },
+ { "userId": 1, "id": 2, "title": "...", "body": "..." }
+]
+</div>
+
+</div>
+
+<div class="section">
+<h2>Step 2: Think Like ABAP</h2>
+
+<table class="table">
+<tr><th>ABAP</th><th>Python/API</th></tr>
+<tr><td>SELECT *</td><td>requests.get()</td></tr>
+<tr><td>Internal Table</td><td>data (list)</td></tr>
+<tr><td>Work Area</td><td>row (dict)</td></tr>
+</table>
+
+</div>
+
+<div class="section">
+<h2>Step 3: Simulated SAP OData Response</h2>
+
+<div class="code">{
+ "d": {
+  "results": [
+    {"Material":"1001","MaterialType":"FERT"},
+    {"Material":"1002","MaterialType":"HALB"}
+  ]
+ }
+}</div>
+
+<h3>Visual Mapping</h3>
+<div class="mock">
+Internal Table = results<br>
+Row = {"Material":"1001","MaterialType":"FERT"}
+</div>
+
+</div>
+
+<div class="section">
+<h2>Step 4: Extract Data</h2>
+
+<div class="code">records = data["d"]["results"]
+
+for row in records:
+    print(row["Material"])</div>
+
+<h3>Expected Output</h3>
+<div class="mock">
+1001<br>
+1002
+</div>
+
+</div>
+
+<div class="section">
+<h2>Step 5: Convert to Table</h2>
+
+<div class="code">import pandas as pd
+
+df = pd.json_normalize(records)
+
+print(df.head())</div>
+
+<h3>Expected Table</h3>
+<div class="mock">
+Material | MaterialType<br>
+1001     | FERT<br>
+1002     | HALB
+</div>
+
+</div>
+
+<div class="section">
+<h2>Step 6: Build a Mini SAP-like Report</h2>
+
+<div class="code">import requests
+import pandas as pd
+
+url = "https://jsonplaceholder.typicode.com/posts"
+
+response = requests.get(url)
+
+data = response.json()
+
+df = pd.DataFrame(data)
+
+print(df[["id","title"]].head())</div>
+
+<h3>Expected Output</h3>
+<div class="mock">
+id | title<br>
+1  | ...<br>
+2  | ...
+</div>
+
+</div>
+
+<div class="section">
+<h2>Step 7: Debug Like an Engineer</h2>
+
+<div class="code">print(response.status_code)
+print(response.text)</div>
+
+<div class="callout">
+If something fails, ALWAYS print the raw response first.
+</div>
+
+</div>
+
+<div class="section">
+<h2>Checkpoint</h2>
+<ul>
+<li>You made your first API call</li>
+<li>You mapped JSON → ABAP thinking</li>
+<li>You built a table from API data</li>
+<li>You created a simple report</li>
+</ul>
+
+</div>
+
+</div>
+
+
+<div class="book-nav" style="position: static; margin-top: 30px;">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">End of Chapter 8</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-07-btp-cloud-foundry.html">Previous</a><a href="chapter-09-ocr-flagship.html">Next</a></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  © 2026 Edwin A. Rodriguez — Think Like Python. All rights reserved.
+</footer>
+
+</body>
+</html>

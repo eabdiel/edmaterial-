@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 0 - Getting Your Python Workbench Ready</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+    --navy: #0b1f3a;
+    --navy-soft: #12345f;
+    --teal: #13a89e;
+    --green: #28a745;
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --text: #2d3748;
+    --muted: #64748b;
+    --code-bg: #1e1e1e;
+    --code-text: #f8f8f2;
+    --warning-bg: #fff7ed;
+    --warning-border: #fb923c;
+    --info-bg: #ecfeff;
+    --info-border: #06b6d4;
+    --success-bg: #f0fdf4;
+    --success-border: #22c55e;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+header {
+    background: linear-gradient(135deg, var(--navy), var(--navy-soft));
+    color: white;
+    padding: 48px 24px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+}
+
+header p {
+    margin-top: 10px;
+    color: #dbeafe;
+    font-size: 1.05rem;
+}
+
+.container {
+    max-width: 1100px;
+    margin: auto;
+    padding: 32px 20px 60px;
+}
+
+.section {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+
+h2, h3 {
+    color: var(--navy);
+}
+
+h2 {
+    margin-top: 0;
+}
+
+.badge {
+    display: inline-block;
+    background: var(--teal);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.callout {
+    padding: 16px;
+    border-radius: 10px;
+    margin: 18px 0;
+}
+
+.callout.info {
+    background: var(--info-bg);
+    border-left: 5px solid var(--info-border);
+}
+
+.callout.warning {
+    background: var(--warning-bg);
+    border-left: 5px solid var(--warning-border);
+}
+
+.callout.success {
+    background: var(--success-bg);
+    border-left: 5px solid var(--success-border);
+}
+
+.path-map {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.path-step {
+    background: #eef6ff;
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+    font-weight: bold;
+    color: var(--navy);
+}
+
+.path-step span {
+    display: block;
+    color: var(--muted);
+    font-weight: normal;
+    font-size: 0.86rem;
+    margin-top: 6px;
+}
+
+.accordion {
+    cursor: pointer;
+    padding: 16px 18px;
+    width: 100%;
+    border: 1px solid #dbeafe;
+    text-align: left;
+    outline: none;
+    background-color: #e8eef7;
+    color: var(--navy);
+    margin-top: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.accordion:hover {
+    background-color: #dbeafe;
+}
+
+.panel {
+    padding: 0 18px 18px;
+    display: none;
+    background-color: white;
+    border: 1px solid #edf2f7;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+}
+
+.code-block {
+    background-color: var(--code-bg);
+    color: var(--code-text);
+    padding: 16px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 0.95rem;
+    white-space: pre;
+}
+
+.side-by-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.checklist li {
+    margin-bottom: 8px;
+}
+
+.reference-list a {
+    color: var(--navy-soft);
+    font-weight: bold;
+}
+
+.footer-note {
+    color: var(--muted);
+    font-size: 0.95rem;
+    text-align: center;
+    margin-top: 30px;
+}
+
+@media (max-width: 800px) {
+    .path-map,
+    .side-by-side {
+        grid-template-columns: 1fr;
+    }
+}
+
+.book-nav {
+    background: #ffffff;
+    border-bottom: 1px solid #d9e2ec;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+.book-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.book-nav-title {
+    color: #0b1f3a;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+.book-nav-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.book-nav a {
+    color: #0b1f3a;
+    text-decoration: none;
+    border: 1px solid #c8d4e3;
+    background: #f8fafc;
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 0.92rem;
+}
+.book-nav a:hover {
+    background: #e8eef7;
+}
+.book-nav a.primary-link {
+    background: #0b1f3a;
+    color: #ffffff;
+    border-color: #0b1f3a;
+}
+.chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+.chapter-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.06);
+}
+.chapter-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(11,31,58,0.12);
+}
+.chapter-card .eyebrow {
+    color: #13a89e;
+    font-weight: 700;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.chapter-card h3 {
+    margin: 8px 0;
+    color: #0b1f3a;
+}
+.chapter-card p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+@media (max-width: 700px) {
+    .book-nav-inner { align-items: flex-start; }
+    .book-nav-links { width: 100%; }
+    .book-nav a { flex: 1 1 auto; text-align: center; }
+}
+
+
+.site-footer {
+    text-align: center;
+    margin: 42px auto 24px;
+    padding: 18px 20px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+</style>
+</head>
+
+<body>
+<nav class="book-nav" aria-label="Book navigation">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">Think Like Python</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="index.html">Previous</a><a href="chapter-01-thinking-like-python.html">Next</a></div>
+  </div>
+</nav>
+
+
+<header>
+    <h1>Chapter 0: Getting Your Python Workbench Ready</h1>
+    <p>Think Like Python: A Guide for ABAP Developers</p>
+</header>
+
+<div class="container">
+
+<div class="section">
+    <span class="badge">Chapter Goal</span>
+    <h2>Before We Write Code, Let’s Build the Workbench</h2>
+    <p>
+        If you are coming from ABAP, you are probably used to opening SAP GUI, going into SE38, SE80, ADT, or Eclipse,
+        and working inside a controlled development environment. Python feels different at first because the workbench is
+        something you assemble: Python itself, an IDE, a project folder, packages, and eventually Git.
+    </p>
+    <p>
+        This chapter walks through that setup slowly and practically. By the end, you should have a local Python project
+        that can run a small script and install packages. That foundation will support the first project in the next chapter:
+        an ALV-style table report rebuilt with Python and Bokeh.
+    </p>
+
+    <div class="path-map">
+        <div class="path-step">1<br><span>Install Python</span></div>
+        <div class="path-step">2<br><span>Pick an IDE</span></div>
+        <div class="path-step">3<br><span>Create a Project</span></div>
+        <div class="path-step">4<br><span>Use venv + pip</span></div>
+        <div class="path-step">5<br><span>Add Git Basics</span></div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>The ABAP-to-Python Setup Translation</h2>
+    <p>
+        A lot of Python setup confusion comes from vocabulary. Here is the quick translation table.
+    </p>
+
+    <div class="side-by-side">
+        <div>
+            <h3>ABAP World</h3>
+            <ul>
+                <li>SAP GUI / ADT</li>
+                <li>Package</li>
+                <li>Transport request</li>
+                <li>Function module include dependencies</li>
+                <li>ALV output</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Python World</h3>
+            <ul>
+                <li>PyCharm or VS Code</li>
+                <li>Project folder</li>
+                <li>Git repository / commit history</li>
+                <li>Installed packages in a virtual environment</li>
+                <li>Bokeh, Flask, Streamlit, or HTML output</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="callout info">
+        <strong>ABAP Mindset:</strong> In SAP, the system provides most of the structure. In Python, you create the structure yourself.
+        That sounds annoying at first, but it gives you a lot of freedom when building tools, dashboards, automation scripts, and cloud-ready apps.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 1: Install Python</h2>
+    <p>
+        Start by installing Python from the official Python website. On Windows, make sure to check the option that adds Python
+        to your PATH during installation. If you miss that checkbox, the command line may not recognize Python.
+    </p>
+
+    <button class="accordion">How to Confirm Python Installed Correctly</button>
+    <div class="panel">
+        <p>Open Command Prompt or PowerShell and run:</p>
+        <div class="code-block">python --version</div>
+        <p>On some Windows machines, this command may work instead:</p>
+        <div class="code-block">py --version</div>
+        <p>If you see a Python version number, you are ready for the next step.</p>
+    </div>
+
+    <button class="accordion">Common Mistake: Python Installed, But Command Not Found</button>
+    <div class="panel">
+        <p>
+            This usually means Python was not added to PATH. The beginner-friendly fix is to rerun the installer and choose
+            the option to modify your install, then enable the PATH option.
+        </p>
+    </div>
+
+    <div class="callout warning">
+        <strong>Do not overthink versions yet.</strong> For this guide, use a current Python 3 version. The important part is getting
+        a stable working environment before chasing advanced tooling.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 2: Choose an IDE</h2>
+    <p>
+        You can use either PyCharm or VS Code. Both are valid. The right choice depends on how much structure you want.
+    </p>
+
+    <div class="side-by-side">
+        <div>
+            <h3>PyCharm</h3>
+            <p>
+                Good if you want a guided Python experience. It helps manage projects, interpreters, virtual environments,
+                and packages through a more complete IDE interface.
+            </p>
+        </div>
+        <div>
+            <h3>VS Code</h3>
+            <p>
+                Good if you want a lightweight editor that can become powerful through extensions. You will need the Python
+                extension and a little comfort with the terminal.
+            </p>
+        </div>
+    </div>
+
+    <div class="callout success">
+        <strong>Recommendation:</strong> If you are brand new to Python, start with PyCharm Community Edition or VS Code with the Python extension.
+        If you already use VS Code for other work, stay there.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 3: Create Your First Project Folder</h2>
+    <p>
+        Create a folder for the book projects. Keep it simple and avoid spaces in the folder name.
+    </p>
+
+    <div class="code-block">C:\dev\think-like-python</div>
+
+    <p>Inside that folder, create a file named:</p>
+
+    <div class="code-block">hello_abap_developer.py</div>
+
+    <p>Add this small test script:</p>
+
+    <div class="code-block">print("Hello ABAP developer. Python is ready.")</div>
+
+    <button class="accordion">Run It from the Terminal</button>
+    <div class="panel">
+        <p>From the project folder, run:</p>
+        <div class="code-block">python hello_abap_developer.py</div>
+        <p>Or, on Windows:</p>
+        <div class="code-block">py hello_abap_developer.py</div>
+    </div>
+
+    <div class="callout info">
+        <strong>Python Translation:</strong> A Python file is like a small executable report. Later, we will split code into modules,
+        functions, and reusable components, but for now one file is enough.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 4: Understand Virtual Environments</h2>
+    <p>
+        A virtual environment is a project-specific Python sandbox. Instead of installing every package globally on your machine,
+        you install packages inside the project’s environment.
+    </p>
+
+    <div class="callout info">
+        <strong>ABAP Comparison:</strong> Think of a virtual environment like isolating dependencies for one project instead of
+        letting every project share the same global toolbox.
+    </div>
+
+    <p>Create a virtual environment:</p>
+
+    <div class="code-block">python -m venv .venv</div>
+
+    <p>Activate it on Windows PowerShell:</p>
+
+    <div class="code-block">.venv\Scripts\Activate.ps1</div>
+
+    <p>Activate it on Windows Command Prompt:</p>
+
+    <div class="code-block">.venv\Scripts\activate.bat</div>
+
+    <p>Activate it on macOS/Linux:</p>
+
+    <div class="code-block">source .venv/bin/activate</div>
+
+    <button class="accordion">How Do I Know It Worked?</button>
+    <div class="panel">
+        <p>
+            Your terminal prompt usually changes and shows <strong>(.venv)</strong> at the beginning.
+        </p>
+        <div class="code-block">(.venv) C:\dev\think-like-python&gt;</div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 5: Install Packages with pip</h2>
+    <p>
+        Python packages are reusable libraries. In ABAP terms, imagine being able to install useful external toolkits into a project.
+        For our early projects, we will use packages like pandas and Bokeh.
+    </p>
+
+    <p>With your virtual environment active, run:</p>
+
+    <div class="code-block">python -m pip install pandas bokeh openpyxl</div>
+
+    <p>Then capture those dependencies into a requirements file:</p>
+
+    <div class="code-block">python -m pip freeze &gt; requirements.txt</div>
+
+    <p>Later, another developer can install the same dependencies with:</p>
+
+    <div class="code-block">python -m pip install -r requirements.txt</div>
+
+    <div class="callout success">
+        <strong>Why this matters:</strong> The requirements file is one of the first habits that makes your Python work shareable.
+        Without it, your script may work on your machine and fail everywhere else.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 6: Learn Just Enough Git</h2>
+    <p>
+        Git is version control. You do not need to become a Git expert on day one, but you should know enough to save your progress,
+        recover from mistakes, and share examples.
+    </p>
+
+    <button class="accordion">Minimum Git Commands for This Book</button>
+    <div class="panel">
+        <div class="code-block">git init
+git status
+git add .
+git commit -m "Initial project setup"</div>
+    </div>
+
+    <button class="accordion">ABAP Translation</button>
+    <div class="panel">
+        <p>
+            A Git commit is not exactly the same thing as an SAP transport, but the mental model is similar:
+            you are collecting related changes and giving them a meaningful label.
+        </p>
+    </div>
+
+    <div class="callout warning">
+        <strong>Common mistake:</strong> Do not commit your <strong>.venv</strong> folder. In later chapters, we will add a
+        <strong>.gitignore</strong> file so Git tracks your code but ignores generated environment files.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Chapter 0 Checkpoint</h2>
+    <p>You are ready to continue if you can do the following:</p>
+
+    <ul class="checklist">
+        <li>Confirm Python runs from the terminal.</li>
+        <li>Create a project folder.</li>
+        <li>Create and run a simple <strong>.py</strong> file.</li>
+        <li>Create and activate a virtual environment.</li>
+        <li>Install packages with pip.</li>
+        <li>Create a <strong>requirements.txt</strong> file.</li>
+        <li>Understand why Git matters, even if you are not fluent yet.</li>
+    </ul>
+
+    <div class="callout success">
+        <strong>Next:</strong> In Chapter 1, we start translating ABAP thinking into Python thinking. Shortly after that,
+        we build the first useful project: an ALV-style table report using Python and Bokeh.
+    </div>
+</div>
+
+<div class="section">
+    <h2>External References</h2>
+    <p>
+        These are official or widely trusted references. You do not need to read them fully now. Keep them nearby when you need deeper details.
+    </p>
+    <ul class="reference-list">
+        <li><a href="https://docs.python.org/3/library/venv.html" target="_blank">Python venv documentation</a></li>
+        <li><a href="https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/" target="_blank">Python Packaging Guide: pip and virtual environments</a></li>
+        <li><a href="https://pip.pypa.io/en/latest/cli/pip_install/" target="_blank">pip install documentation</a></li>
+        <li><a href="https://code.visualstudio.com/docs/languages/python" target="_blank">Python in Visual Studio Code</a></li>
+        <li><a href="https://www.jetbrains.com/help/pycharm/creating-virtual-environment.html" target="_blank">PyCharm virtual environment documentation</a></li>
+        <li><a href="https://git-scm.com/docs" target="_blank">Official Git documentation</a></li>
+        <li><a href="https://git-scm.com/book/en/v2" target="_blank">Pro Git book</a></li>
+    </ul>
+</div>
+
+<p class="footer-note">
+    Think Like Python: A Guide for ABAP Developers — Chapter 0
+</p>
+
+</div>
+
+<script>
+var acc = document.getElementsByClassName("accordion");
+for (var i = 0; i < acc.length; i++) {
+  acc[i].onclick = function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  }
+}
+</script>
+
+
+<div class="book-nav" style="position: static; margin-top: 30px;">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">End of Chapter 0</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="index.html">Previous</a><a href="chapter-01-thinking-like-python.html">Next</a></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  © 2026 Edwin A. Rodriguez — Think Like Python. All rights reserved.
+</footer>
+
+</body>
+</html>

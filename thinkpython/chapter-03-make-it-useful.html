@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 3 - Make It Useful</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+    --navy: #0b1f3a;
+    --navy-soft: #12345f;
+    --teal: #13a89e;
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --text: #2d3748;
+    --muted: #64748b;
+    --code-bg: #1e1e1e;
+    --code-text: #f8f8f2;
+    --info-bg: #ecfeff;
+    --info-border: #06b6d4;
+    --warning-bg: #fff7ed;
+    --warning-border: #fb923c;
+    --success-bg: #f0fdf4;
+    --success-border: #22c55e;
+    --line: #dbeafe;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+header {
+    background: linear-gradient(135deg, var(--navy), var(--navy-soft));
+    color: white;
+    padding: 48px 24px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.25rem;
+}
+
+header p {
+    color: #dbeafe;
+    margin-top: 10px;
+}
+
+.container {
+    max-width: 1180px;
+    margin: auto;
+    padding: 32px 20px 60px;
+}
+
+.section {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+
+h2, h3 {
+    color: var(--navy);
+}
+
+h2 {
+    margin-top: 0;
+}
+
+.badge {
+    display: inline-block;
+    background: var(--teal);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.code-block {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 16px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 0.92rem;
+    white-space: pre;
+}
+
+.callout {
+    padding: 16px;
+    border-radius: 10px;
+    margin: 18px 0;
+}
+
+.callout.info {
+    background: var(--info-bg);
+    border-left: 5px solid var(--info-border);
+}
+
+.callout.warning {
+    background: var(--warning-bg);
+    border-left: 5px solid var(--warning-border);
+}
+
+.callout.success {
+    background: var(--success-bg);
+    border-left: 5px solid var(--success-border);
+}
+
+.side-by-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 14px;
+}
+
+.three-col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.workflow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    align-items: stretch;
+    margin: 22px 0 6px;
+}
+
+.step {
+    background: #eef6ff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    position: relative;
+}
+
+.step strong {
+    display: block;
+    color: var(--navy);
+    margin-bottom: 6px;
+}
+
+.step span {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.step:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    right: -13px;
+    top: 40%;
+    color: var(--navy-soft);
+    font-weight: bold;
+}
+
+.mock-window {
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    margin-top: 14px;
+}
+
+.mock-title {
+    background: #e2e8f0;
+    padding: 10px 14px;
+    color: var(--navy);
+    font-weight: bold;
+    font-size: 0.92rem;
+}
+
+.mock-body {
+    padding: 16px;
+}
+
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+}
+
+.preview-table th {
+    background: #e8eef7;
+    color: var(--navy);
+    text-align: left;
+}
+
+.preview-table th,
+.preview-table td {
+    border: 1px solid var(--line);
+    padding: 9px;
+}
+
+.filter-chip {
+    display: inline-block;
+    background: #dcfce7;
+    color: #166534;
+    padding: 5px 9px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.chart {
+    height: 230px;
+    border-left: 2px solid #334155;
+    border-bottom: 2px solid #334155;
+    display: flex;
+    align-items: flex-end;
+    gap: 26px;
+    padding: 16px 20px 0;
+    margin: 20px 0 4px;
+}
+
+.bar-wrap {
+    text-align: center;
+    flex: 1;
+}
+
+.bar {
+    background: linear-gradient(180deg, #13a89e, #0b1f3a);
+    border-radius: 8px 8px 0 0;
+    margin: auto;
+    width: 70%;
+}
+
+.bar-label {
+    margin-top: 8px;
+    font-size: 0.86rem;
+    color: var(--muted);
+}
+
+.bar-value {
+    color: var(--navy);
+    font-weight: bold;
+    font-size: 0.88rem;
+}
+
+.file-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+    background: #f8fafc;
+}
+
+.file-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.accordion {
+    cursor: pointer;
+    padding: 16px 18px;
+    width: 100%;
+    border: 1px solid var(--line);
+    text-align: left;
+    outline: none;
+    background-color: #e8eef7;
+    color: var(--navy);
+    margin-top: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.accordion:hover {
+    background-color: #dbeafe;
+}
+
+.panel {
+    padding: 0 18px 18px;
+    display: none;
+    background-color: white;
+    border: 1px solid #edf2f7;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+}
+
+.footer-note {
+    color: var(--muted);
+    font-size: 0.95rem;
+    text-align: center;
+    margin-top: 30px;
+}
+
+@media (max-width: 900px) {
+    .side-by-side,
+    .three-col,
+    .workflow {
+        grid-template-columns: 1fr;
+    }
+
+    .step:not(:last-child)::after {
+        content: "↓";
+        right: 50%;
+        top: auto;
+        bottom: -18px;
+    }
+}
+
+.book-nav {
+    background: #ffffff;
+    border-bottom: 1px solid #d9e2ec;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+.book-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.book-nav-title {
+    color: #0b1f3a;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+.book-nav-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.book-nav a {
+    color: #0b1f3a;
+    text-decoration: none;
+    border: 1px solid #c8d4e3;
+    background: #f8fafc;
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 0.92rem;
+}
+.book-nav a:hover {
+    background: #e8eef7;
+}
+.book-nav a.primary-link {
+    background: #0b1f3a;
+    color: #ffffff;
+    border-color: #0b1f3a;
+}
+.chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+.chapter-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.06);
+}
+.chapter-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(11,31,58,0.12);
+}
+.chapter-card .eyebrow {
+    color: #13a89e;
+    font-weight: 700;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.chapter-card h3 {
+    margin: 8px 0;
+    color: #0b1f3a;
+}
+.chapter-card p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+@media (max-width: 700px) {
+    .book-nav-inner { align-items: flex-start; }
+    .book-nav-links { width: 100%; }
+    .book-nav a { flex: 1 1 auto; text-align: center; }
+}
+
+
+.site-footer {
+    text-align: center;
+    margin: 42px auto 24px;
+    padding: 18px 20px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+</style>
+</head>
+
+<body>
+<nav class="book-nav" aria-label="Book navigation">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">Think Like Python</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-02-first-project-alv-to-python.html">Previous</a><a href="chapter-04-from-script-to-tool.html">Next</a></div>
+  </div>
+</nav>
+
+
+<header>
+    <h1>Chapter 3: Make It Useful</h1>
+    <p>Turning your first Python report into something that feels closer to a real SAP reporting tool</p>
+</header>
+
+<div class="container">
+
+<div class="section">
+    <span class="badge">Chapter Goal</span>
+    <h2>From Demo Script to Practical Report</h2>
+    <p>
+        In Chapter 2, you built a simple Python report that displayed material data in a browser-based table.
+        That was the “hello world” version of an ALV-style report.
+    </p>
+    <p>
+        Now we make it useful. A report becomes valuable when users can narrow the data, sort it, export it,
+        and understand the result quickly.
+    </p>
+
+    <div class="workflow">
+        <div class="step"><strong>Load</strong><span>Read material data</span></div>
+        <div class="step"><strong>Filter</strong><span>Keep what matters</span></div>
+        <div class="step"><strong>Sort</strong><span>Organize rows</span></div>
+        <div class="step"><strong>Export</strong><span>Create Excel output</span></div>
+        <div class="step"><strong>Visualize</strong><span>Add quick insight</span></div>
+    </div>
+
+    <div class="callout success">
+        <strong>ABAP mindset:</strong> We are adding the things users expect from ALV: filtering, sorting, exporting, and quick analysis.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Starting Dataset</h2>
+    <p>
+        We will keep using a small CSV file so the project is easy to run. Later chapters can replace this file with
+        a database query, SAP RFC call, OData service, or API response.
+    </p>
+
+    <div class="side-by-side">
+        <div>
+            <h3>materials.csv</h3>
+            <div class="code-block">matnr,maktx,mtart,matkl,plant,stock
+1001,Demo Finished Product,FERT,001,1000,45
+1002,Demo Semi Finished,HALB,002,1000,22
+1003,Demo Raw Material,ROH,003,2000,120
+1004,Demo Finished Product 2,FERT,001,2000,31
+1005,Demo Trading Good,HAWA,004,3000,8
+1006,Demo Finished Product 3,FERT,002,1000,67</div>
+        </div>
+
+        <div>
+            <h3>What the user should see</h3>
+            <div class="mock-window">
+                <div class="mock-title">Preview: Material Data</div>
+                <div class="mock-body">
+                    <table class="preview-table">
+                        <tr>
+                            <th>Material</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                            <th>Plant</th>
+                            <th>Stock</th>
+                        </tr>
+                        <tr><td>1001</td><td>Demo Finished Product</td><td>FERT</td><td>1000</td><td>45</td></tr>
+                        <tr><td>1002</td><td>Demo Semi Finished</td><td>HALB</td><td>1000</td><td>22</td></tr>
+                        <tr><td>1003</td><td>Demo Raw Material</td><td>ROH</td><td>2000</td><td>120</td></tr>
+                        <tr><td>1004</td><td>Demo Finished Product 2</td><td>FERT</td><td>2000</td><td>31</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="accordion">Why are we using a CSV instead of SAP data?</button>
+    <div class="panel">
+        <p>
+            Because the goal is to learn the Python reporting pattern first. Once the pattern is clear, the data source can change.
+            This avoids beginner blockers like authorizations, network issues, database drivers, API tokens, and SAP connectivity.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 1: Load the Data</h2>
+    <p>
+        In ABAP, your report often starts with a SELECT statement. In this beginner Python version, we start by reading a CSV.
+    </p>
+
+    <div class="side-by-side">
+        <div>
+            <h3>ABAP Pattern</h3>
+            <div class="code-block">SELECT matnr, maktx, mtart, matkl
+  FROM mara
+  INTO TABLE @DATA(lt_materials)
+  UP TO 100 ROWS.</div>
+        </div>
+        <div>
+            <h3>Python Pattern</h3>
+            <div class="code-block">import pandas as pd
+
+df = pd.read_csv("materials.csv")
+
+print(df.head())</div>
+        </div>
+    </div>
+
+    <div class="callout info">
+        <strong>Python translation:</strong> The DataFrame named <strong>df</strong> is now your table-like structure.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 2: Filter Like a Selection Condition</h2>
+    <p>
+        ABAP developers are used to WHERE clauses and selection screens. In Python, the simplest beginner-friendly filter
+        uses pandas conditions.
+    </p>
+
+    <div class="side-by-side">
+        <div>
+            <h3>ABAP</h3>
+            <div class="code-block">SELECT matnr, mtart, plant
+  FROM zmaterial_stock
+  INTO TABLE @DATA(lt_materials)
+  WHERE mtart = 'FERT'.</div>
+        </div>
+        <div>
+            <h3>Python</h3>
+            <div class="code-block">filtered = df[df["mtart"] == "FERT"]
+
+print(filtered)</div>
+        </div>
+    </div>
+
+    <h3>Expected filtered preview</h3>
+    <div class="mock-window">
+        <div class="mock-title">Preview: Filter Applied</div>
+        <div class="mock-body">
+            <span class="filter-chip">Filter: Material Type = FERT</span>
+            <table class="preview-table">
+                <tr>
+                    <th>Material</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Plant</th>
+                    <th>Stock</th>
+                </tr>
+                <tr><td>1001</td><td>Demo Finished Product</td><td>FERT</td><td>1000</td><td>45</td></tr>
+                <tr><td>1004</td><td>Demo Finished Product 2</td><td>FERT</td><td>2000</td><td>31</td></tr>
+                <tr><td>1006</td><td>Demo Finished Product 3</td><td>FERT</td><td>1000</td><td>67</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 3: Sort the Result</h2>
+    <p>
+        A sorted result is easier to scan. This is the same idea as sorting an ALV column, except we do it before displaying
+        the report.
+    </p>
+
+    <div class="side-by-side">
+        <div>
+            <h3>Sort by Material</h3>
+            <div class="code-block">sorted_df = filtered.sort_values(by="matnr")</div>
+        </div>
+        <div>
+            <h3>Sort by Stock Descending</h3>
+            <div class="code-block">sorted_df = filtered.sort_values(
+    by="stock",
+    ascending=False
+)</div>
+        </div>
+    </div>
+
+    <div class="callout info">
+        <strong>Tip:</strong> Sorting before display is useful when you want the report to open with the most important records first.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 4: Display the Improved Table with Bokeh</h2>
+    <p>
+        Now we display the filtered and sorted DataFrame in a Bokeh DataTable. This is the closest beginner-friendly replacement
+        for a simple ALV table.
+    </p>
+
+    <div class="code-block">from bokeh.models import ColumnDataSource, DataTable, TableColumn
+from bokeh.io import show
+
+source = ColumnDataSource(sorted_df)
+
+columns = [
+    TableColumn(field="matnr", title="Material"),
+    TableColumn(field="maktx", title="Description"),
+    TableColumn(field="mtart", title="Type"),
+    TableColumn(field="plant", title="Plant"),
+    TableColumn(field="stock", title="Stock")
+]
+
+table = DataTable(
+    source=source,
+    columns=columns,
+    width=950,
+    height=280,
+    sortable=True
+)
+
+show(table)</div>
+
+    <h3>Expected browser result</h3>
+    <div class="mock-window">
+        <div class="mock-title">Browser Preview: Bokeh DataTable</div>
+        <div class="mock-body">
+            <table class="preview-table">
+                <tr>
+                    <th>Material ▲▼</th>
+                    <th>Description ▲▼</th>
+                    <th>Type ▲▼</th>
+                    <th>Plant ▲▼</th>
+                    <th>Stock ▲▼</th>
+                </tr>
+                <tr><td>1006</td><td>Demo Finished Product 3</td><td>FERT</td><td>1000</td><td>67</td></tr>
+                <tr><td>1001</td><td>Demo Finished Product</td><td>FERT</td><td>1000</td><td>45</td></tr>
+                <tr><td>1004</td><td>Demo Finished Product 2</td><td>FERT</td><td>2000</td><td>31</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 5: Export to Excel</h2>
+    <p>
+        A lot of practical reporting work still ends in Excel. That is not a failure; it is reality.
+        Python can generate that file directly.
+    </p>
+
+    <div class="code-block">sorted_df.to_excel("filtered_materials.xlsx", index=False)</div>
+
+    <div class="three-col">
+        <div class="file-card">
+            <div class="file-icon">📄</div>
+            <strong>Input</strong>
+            <p>materials.csv</p>
+        </div>
+        <div class="file-card">
+            <div class="file-icon">⚙️</div>
+            <strong>Processing</strong>
+            <p>filter + sort</p>
+        </div>
+        <div class="file-card">
+            <div class="file-icon">📊</div>
+            <strong>Output</strong>
+            <p>filtered_materials.xlsx</p>
+        </div>
+    </div>
+
+    <div class="callout success">
+        <strong>Practical value:</strong> This one line can replace repeated manual exports, cleanup, and copy/paste routines.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 6: Add a Quick Chart</h2>
+    <p>
+        A table answers “what are the records?” A chart answers “what is the pattern?”
+        For this example, we count how many records exist by material type.
+    </p>
+
+    <div class="code-block">from bokeh.plotting import figure, show
+
+counts = df["mtart"].value_counts()
+
+chart = figure(
+    x_range=list(counts.index),
+    title="Material Count by Type",
+    height=350,
+    width=700
+)
+
+chart.vbar(
+    x=list(counts.index),
+    top=list(counts.values),
+    width=0.6
+)
+
+show(chart)</div>
+
+    <h3>Expected chart preview</h3>
+    <div class="mock-window">
+        <div class="mock-title">Preview: Material Count by Type</div>
+        <div class="mock-body">
+            <div class="chart">
+                <div class="bar-wrap">
+                    <div class="bar" style="height: 180px;"></div>
+                    <div class="bar-value">3</div>
+                    <div class="bar-label">FERT</div>
+                </div>
+                <div class="bar-wrap">
+                    <div class="bar" style="height: 60px;"></div>
+                    <div class="bar-value">1</div>
+                    <div class="bar-label">HALB</div>
+                </div>
+                <div class="bar-wrap">
+                    <div class="bar" style="height: 60px;"></div>
+                    <div class="bar-value">1</div>
+                    <div class="bar-label">ROH</div>
+                </div>
+                <div class="bar-wrap">
+                    <div class="bar" style="height: 60px;"></div>
+                    <div class="bar-value">1</div>
+                    <div class="bar-label">HAWA</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="accordion">Why add charts this early?</button>
+    <div class="panel">
+        <p>
+            Because many SAP reports stop at rows and columns. Python makes it easy to add quick visual summaries that help
+            users understand the data faster.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Full Script: Improved Material Report</h2>
+    <p>
+        Here is the full beginner-friendly version. Save it as <strong>material_report.py</strong> in the same folder as your
+        <strong>materials.csv</strong> file.
+    </p>
+
+    <div class="code-block">import pandas as pd
+from bokeh.io import show
+from bokeh.layouts import column
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, Div
+from bokeh.plotting import figure
+
+# 1. Load data
+df = pd.read_csv("materials.csv")
+
+# 2. Filter to finished products
+filtered_df = df[df["mtart"] == "FERT"]
+
+# 3. Sort by stock descending
+sorted_df = filtered_df.sort_values(by="stock", ascending=False)
+
+# 4. Export filtered result to Excel
+sorted_df.to_excel("filtered_materials.xlsx", index=False)
+
+# 5. Build Bokeh table
+source = ColumnDataSource(sorted_df)
+
+columns = [
+    TableColumn(field="matnr", title="Material"),
+    TableColumn(field="maktx", title="Description"),
+    TableColumn(field="mtart", title="Type"),
+    TableColumn(field="plant", title="Plant"),
+    TableColumn(field="stock", title="Stock")
+]
+
+table = DataTable(
+    source=source,
+    columns=columns,
+    width=950,
+    height=280,
+    sortable=True
+)
+
+# 6. Build chart
+counts = df["mtart"].value_counts()
+
+chart = figure(
+    x_range=list(counts.index),
+    title="Material Count by Type",
+    height=350,
+    width=700
+)
+
+chart.vbar(
+    x=list(counts.index),
+    top=list(counts.values),
+    width=0.6
+)
+
+# 7. Show report
+title = Div(text="&lt;h2&gt;Material Report&lt;/h2&gt;&lt;p&gt;Filtered to FERT materials and sorted by stock.&lt;/p&gt;")
+
+show(column(title, table, chart))</div>
+
+    <button class="accordion">What files should be in my folder?</button>
+    <div class="panel">
+        <div class="code-block">think-like-python-project/
+│
+├── material_report.py
+├── materials.csv
+└── filtered_materials.xlsx  ← created after running the script</div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>What You Should Have After Running This</h2>
+
+    <div class="three-col">
+        <div class="file-card">
+            <div class="file-icon">🌐</div>
+            <strong>Browser Report</strong>
+            <p>A Bokeh page with a sortable table and a simple bar chart.</p>
+        </div>
+        <div class="file-card">
+            <div class="file-icon">📊</div>
+            <strong>Excel File</strong>
+            <p>A filtered Excel export named <strong>filtered_materials.xlsx</strong>.</p>
+        </div>
+        <div class="file-card">
+            <div class="file-icon">🧠</div>
+            <strong>Reusable Pattern</strong>
+            <p>Load data, filter it, sort it, export it, and visualize it.</p>
+        </div>
+    </div>
+
+    <div class="callout success">
+        <strong>Big idea:</strong> You did not just write Python syntax. You built the reporting pattern that will keep showing up
+        throughout this book.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Try This</h2>
+    <ul>
+        <li>Change the filter from <strong>FERT</strong> to <strong>HALB</strong>.</li>
+        <li>Sort by <strong>plant</strong> instead of <strong>stock</strong>.</li>
+        <li>Add another column to the Bokeh table.</li>
+        <li>Export all materials to one Excel sheet and filtered materials to another sheet.</li>
+        <li>Change the chart so it counts materials by plant instead of material type.</li>
+    </ul>
+
+    <button class="accordion">Stretch goal: two-sheet Excel export</button>
+    <div class="panel">
+        <div class="code-block">with pd.ExcelWriter("material_report.xlsx") as writer:
+    df.to_excel(writer, sheet_name="All Materials", index=False)
+    sorted_df.to_excel(writer, sheet_name="Filtered FERT", index=False)</div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Chapter 3 Checkpoint</h2>
+    <ul>
+        <li>You can load a CSV file into pandas.</li>
+        <li>You can filter and sort the result.</li>
+        <li>You can display the result in a browser table.</li>
+        <li>You can export the result to Excel.</li>
+        <li>You can create a basic Bokeh chart.</li>
+    </ul>
+
+    <div class="callout info">
+        <strong>Next:</strong> Before jumping to Flask and BTP, we should bridge one more ABAP concept:
+        selection screens. The next chapter can show how Python scripts accept user input and parameters.
+    </div>
+</div>
+
+<p class="footer-note">
+    Think Like Python: A Guide for ABAP Developers — Chapter 3
+</p>
+
+</div>
+
+<script>
+var acc = document.getElementsByClassName("accordion");
+for (var i = 0; i < acc.length; i++) {
+  acc[i].onclick = function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  }
+}
+</script>
+
+
+<div class="book-nav" style="position: static; margin-top: 30px;">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">End of Chapter 3</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-02-first-project-alv-to-python.html">Previous</a><a href="chapter-04-from-script-to-tool.html">Next</a></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  © 2026 Edwin A. Rodriguez — Think Like Python. All rights reserved.
+</footer>
+
+</body>
+</html>

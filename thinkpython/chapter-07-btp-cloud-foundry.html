@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 7 - BTP Cloud Foundry (Full Guided Setup)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{font-family:Arial;margin:0;background:#f4f6f8;color:#333}
+header{background:#0b1f3a;color:#fff;padding:40px;text-align:center}
+.container{max-width:1100px;margin:auto;padding:30px}
+.section{background:#fff;padding:25px;margin-bottom:20px;border-radius:10px}
+h2{color:#0b1f3a}
+.code{background:#1e1e1e;color:#f8f8f2;padding:12px;border-radius:8px;white-space:pre}
+.callout{background:#eef6ff;padding:15px;border-left:5px solid #13a89e;margin:15px 0}
+.warning{background:#fff7ed;border-left:5px solid #fb923c}
+.success{background:#f0fdf4;border-left:5px solid #22c55e}
+.step{margin-bottom:20px}
+
+.book-nav {
+    background: #ffffff;
+    border-bottom: 1px solid #d9e2ec;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+.book-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.book-nav-title {
+    color: #0b1f3a;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+.book-nav-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.book-nav a {
+    color: #0b1f3a;
+    text-decoration: none;
+    border: 1px solid #c8d4e3;
+    background: #f8fafc;
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 0.92rem;
+}
+.book-nav a:hover {
+    background: #e8eef7;
+}
+.book-nav a.primary-link {
+    background: #0b1f3a;
+    color: #ffffff;
+    border-color: #0b1f3a;
+}
+.chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+.chapter-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.06);
+}
+.chapter-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(11,31,58,0.12);
+}
+.chapter-card .eyebrow {
+    color: #13a89e;
+    font-weight: 700;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.chapter-card h3 {
+    margin: 8px 0;
+    color: #0b1f3a;
+}
+.chapter-card p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+@media (max-width: 700px) {
+    .book-nav-inner { align-items: flex-start; }
+    .book-nav-links { width: 100%; }
+    .book-nav a { flex: 1 1 auto; text-align: center; }
+}
+
+
+.site-footer {
+    text-align: center;
+    margin: 42px auto 24px;
+    padding: 18px 20px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+</style>
+</head>
+<body>
+<nav class="book-nav" aria-label="Book navigation">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">Think Like Python</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-06-make-the-flask-report-useful.html">Previous</a><a href="chapter-08-talking-to-sap-apis.html">Next</a></div>
+  </div>
+</nav>
+
+
+<header>
+<h1>Chapter 7: Deploy to SAP BTP Cloud Foundry (Full Guide)</h1>
+<p>From zero setup → live application (step-by-step)</p>
+</header>
+
+<div class="container">
+
+<div class="section">
+<h2>Before We Start</h2>
+<p>This chapter assumes:</p>
+<ul>
+<li>You have your Flask app working locally</li>
+<li>You have a SAP BTP account with Cloud Foundry enabled</li>
+</ul>
+
+<div class="callout warning">
+If you skip setup steps, deployment WILL fail. Follow in order.
+</div>
+</div>
+
+<div class="section">
+<h2>Step 1: Install Cloud Foundry CLI</h2>
+
+<p>Go here:</p>
+<div class="code">https://docs.cloudfoundry.org/cf-cli/install-go-cli.html</div>
+
+<p>Download and install for your OS.</p>
+
+<p>Verify installation:</p>
+<div class="code">cf version</div>
+
+<div class="callout success">
+If you see a version number, you're good.
+</div>
+</div>
+
+<div class="section">
+<h2>Step 2: Access SAP BTP</h2>
+
+<p>Go to:</p>
+<div class="code">https://cockpit.btp.cloud.sap</div>
+
+<ul>
+<li>Select your subaccount</li>
+<li>Go to: Cloud Foundry → Spaces</li>
+</ul>
+
+</div>
+
+<div class="section">
+<h2>Step 3: Create a Space (IMPORTANT)</h2>
+
+<p>If you don't have one:</p>
+
+<ul>
+<li>Click "Create Space"</li>
+<li>Name it: dev (or anything)</li>
+<li>Assign yourself as Developer</li>
+</ul>
+
+<div class="callout warning">
+No space = no deployment target
+</div>
+
+</div>
+
+<div class="section">
+<h2>Step 4: Get API Endpoint</h2>
+
+<p>In BTP Cockpit:</p>
+<ul>
+<li>Go to Cloud Foundry Environment</li>
+<li>Copy API Endpoint</li>
+</ul>
+
+</div>
+
+<div class="section">
+<h2>Step 5: Login via CLI</h2>
+
+<div class="code">cf login</div>
+
+<p>Enter:</p>
+<ul>
+<li>API Endpoint (from BTP)</li>
+<li>Email + Password</li>
+<li>Org</li>
+<li>Space</li>
+</ul>
+
+<div class="callout success">
+You should now be connected to BTP.
+</div>
+
+</div>
+
+<div class="section">
+<h2>Step 6: Prepare Your App</h2>
+
+<h3>requirements.txt</h3>
+<div class="code">flask
+pandas
+openpyxl</div>
+
+<h3>Procfile</h3>
+<div class="code">web: python app.py</div>
+
+<h3>manifest.yml</h3>
+<div class="code">applications:
+- name: material-report-app
+  memory: 512M
+  buildpacks:
+    - python_buildpack</div>
+
+<div class="callout warning">
+manifest.yml controls how your app runs in the cloud.
+</div>
+
+</div>
+
+<div class="section">
+<h2>Step 7: Fix Flask for Cloud</h2>
+
+<div class="code">import os
+port = int(os.environ.get("PORT", 5000))
+app.run(host="0.0.0.0", port=port)</div>
+
+</div>
+
+<div class="section">
+<h2>Step 8: Deploy</h2>
+
+<div class="code">cf push</div>
+
+<p>Watch logs carefully.</p>
+
+</div>
+
+<div class="section">
+<h2>What Success Looks Like</h2>
+
+<div class="code">requested state: started
+instances: 1/1
+routes: https://your-app.cfapps...</div>
+
+<p>Open URL → your app is live.</p>
+
+</div>
+
+<div class="section">
+<h2>Debugging</h2>
+
+<div class="code">cf logs material-report-app --recent</div>
+
+<div class="callout">
+Most errors are visible here.
+</div>
+
+</div>
+
+<div class="section">
+<h2>Common Mistakes</h2>
+
+<ul>
+<li>Missing space</li>
+<li>Wrong manifest.yml</li>
+<li>Missing dependencies</li>
+<li>Port not configured</li>
+</ul>
+
+</div>
+
+<div class="section">
+<h2>Next</h2>
+
+<p>Next: APIs and SAP data integration.</p>
+
+</div>
+
+</div>
+
+
+<div class="book-nav" style="position: static; margin-top: 30px;">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">End of Chapter 7</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-06-make-the-flask-report-useful.html">Previous</a><a href="chapter-08-talking-to-sap-apis.html">Next</a></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  © 2026 Edwin A. Rodriguez — Think Like Python. All rights reserved.
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 11 - From Developer to ALM Engineer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+    --navy: #0b1f3a;
+    --navy-soft: #12345f;
+    --teal: #13a89e;
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --text: #2d3748;
+    --muted: #64748b;
+    --code-bg: #1e1e1e;
+    --code-text: #f8f8f2;
+    --info-bg: #ecfeff;
+    --info-border: #06b6d4;
+    --warning-bg: #fff7ed;
+    --warning-border: #fb923c;
+    --success-bg: #f0fdf4;
+    --success-border: #22c55e;
+    --line: #dbeafe;
+}
+* { box-sizing: border-box; }
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.72;
+}
+header {
+    background: linear-gradient(135deg, var(--navy), var(--navy-soft));
+    color: white;
+    padding: 52px 24px;
+    text-align: center;
+}
+header h1 { margin: 0; font-size: 2.25rem; }
+header p { color: #dbeafe; margin-top: 10px; font-size: 1.05rem; }
+.container { max-width: 1180px; margin: auto; padding: 32px 20px 60px; }
+.section {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+h2, h3 { color: var(--navy); }
+h2 { margin-top: 0; }
+.badge {
+    display: inline-block;
+    background: var(--teal);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.callout {
+    padding: 16px;
+    border-radius: 10px;
+    margin: 18px 0;
+}
+.callout.info { background: var(--info-bg); border-left: 5px solid var(--info-border); }
+.callout.warning { background: var(--warning-bg); border-left: 5px solid var(--warning-border); }
+.callout.success { background: var(--success-bg); border-left: 5px solid var(--success-border); }
+.code-block {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 16px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 0.92rem;
+    white-space: pre;
+}
+.workflow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    align-items: stretch;
+    margin: 22px 0 6px;
+}
+.step {
+    background: #eef6ff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    position: relative;
+}
+.step strong { display: block; color: var(--navy); margin-bottom: 6px; }
+.step span { color: var(--muted); font-size: 0.9rem; }
+.step:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    right: -13px;
+    top: 40%;
+    color: var(--navy-soft);
+    font-weight: bold;
+}
+.lifecycle {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-top: 18px;
+}
+.lifecycle .node {
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    text-align: center;
+}
+.lifecycle .node strong {
+    display: block;
+    color: var(--navy);
+}
+.mini-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 14px;
+}
+.mini-table th {
+    background: #e8eef7;
+    color: var(--navy);
+    text-align: left;
+}
+.mini-table th, .mini-table td {
+    border: 1px solid var(--line);
+    padding: 10px;
+    vertical-align: top;
+}
+.mock-window {
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    margin-top: 14px;
+}
+.mock-title {
+    background: #e2e8f0;
+    padding: 10px 14px;
+    color: var(--navy);
+    font-weight: bold;
+    font-size: 0.92rem;
+}
+.mock-body { padding: 16px; }
+.quote-box {
+    font-size: 1.15rem;
+    color: var(--navy);
+    background: #f8fafc;
+    border-left: 6px solid var(--teal);
+    padding: 18px;
+    border-radius: 10px;
+    margin: 18px 0;
+}
+.ref-list a {
+    color: var(--navy-soft);
+    font-weight: bold;
+}
+.accordion {
+    cursor: pointer;
+    padding: 16px 18px;
+    width: 100%;
+    border: 1px solid var(--line);
+    text-align: left;
+    outline: none;
+    background-color: #e8eef7;
+    color: var(--navy);
+    margin-top: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+.accordion:hover { background-color: #dbeafe; }
+.panel {
+    padding: 0 18px 18px;
+    display: none;
+    background-color: white;
+    border: 1px solid #edf2f7;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+}
+.footer-note {
+    color: var(--muted);
+    font-size: 0.95rem;
+    text-align: center;
+    margin-top: 30px;
+}
+@media (max-width: 950px) {
+    .workflow, .lifecycle { grid-template-columns: 1fr; }
+    .step:not(:last-child)::after {
+        content: "↓";
+        right: 50%;
+        top: auto;
+        bottom: -18px;
+    }
+}
+
+.book-nav {
+    background: #ffffff;
+    border-bottom: 1px solid #d9e2ec;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+.book-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.book-nav-title {
+    color: #0b1f3a;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+.book-nav-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.book-nav a {
+    color: #0b1f3a;
+    text-decoration: none;
+    border: 1px solid #c8d4e3;
+    background: #f8fafc;
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 0.92rem;
+}
+.book-nav a:hover {
+    background: #e8eef7;
+}
+.book-nav a.primary-link {
+    background: #0b1f3a;
+    color: #ffffff;
+    border-color: #0b1f3a;
+}
+.chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+.chapter-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.06);
+}
+.chapter-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(11,31,58,0.12);
+}
+.chapter-card .eyebrow {
+    color: #13a89e;
+    font-weight: 700;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.chapter-card h3 {
+    margin: 8px 0;
+    color: #0b1f3a;
+}
+.chapter-card p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+@media (max-width: 700px) {
+    .book-nav-inner { align-items: flex-start; }
+    .book-nav-links { width: 100%; }
+    .book-nav a { flex: 1 1 auto; text-align: center; }
+}
+
+
+.site-footer {
+    text-align: center;
+    margin: 42px auto 24px;
+    padding: 18px 20px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+</style>
+</head>
+
+<body>
+<nav class="book-nav" aria-label="Book navigation">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">Think Like Python</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-10-ai-ocr-api-deployment.html">Previous</a><a href="index.html">Back to Start</a></div>
+  </div>
+</nav>
+
+
+<header>
+    <h1>Chapter 11: From Developer to ALM Engineer</h1>
+    <p>Observability, automation, and risk-based thinking in a cloud and AI world</p>
+</header>
+
+<div class="container">
+
+<div class="section">
+    <span class="badge">Closing Chapter</span>
+    <h2>What This Chapter Is Really About</h2>
+
+    <p>
+        Up to this point, you have learned how to build. You have written Python scripts, created web applications,
+        deployed services to the cloud, automated document processing, and used AI to accelerate development.
+    </p>
+
+    <p>
+        But here is the truth: none of that, by itself, makes you a modern engineer. What matters most is how you think
+        about what you build after it leaves your machine.
+    </p>
+
+    <div class="quote-box">
+        None of this is only about code. This is about system behavior, reliability, and business risk.
+    </div>
+
+    <p>
+        This chapter is about that shift. It is the move from “I wrote something that works” to
+        “I designed something that can be observed, trusted, improved, and safely operated.”
+    </p>
+</div>
+
+<div class="section">
+    <h2>The Shift: From Writing Code to Designing Systems</h2>
+
+    <p>
+        Traditional ABAP development often lives inside a controlled environment. You write logic, test it, attach it to
+        a transport, and the system provides much of the surrounding structure. That world is still important, but modern
+        enterprise development extends far beyond one runtime.
+    </p>
+
+    <p>
+        Your applications may now live in distributed environments, interact with APIs, depend on external services,
+        run inside containers, receive files from users, return JSON to other systems, and fail in ways that are not always
+        visible from a single transaction code.
+    </p>
+
+    <div class="callout warning">
+        <strong>New responsibility:</strong> You are no longer responsible only for code correctness. You are responsible for
+        system behavior.
+    </div>
+
+    <table class="mini-table">
+        <tr>
+            <th>Stage</th>
+            <th>Primary Focus</th>
+        </tr>
+        <tr>
+            <td>ABAP Developer</td>
+            <td>Writing functional logic inside SAP.</td>
+        </tr>
+        <tr>
+            <td>Python Developer</td>
+            <td>Working with files, data, APIs, scripts, and external libraries.</td>
+        </tr>
+        <tr>
+            <td>Tool Builder</td>
+            <td>Creating reusable utilities that reduce manual work.</td>
+        </tr>
+        <tr>
+            <td>Application Developer</td>
+            <td>Building web interfaces and services that users can interact with.</td>
+        </tr>
+        <tr>
+            <td>Cloud Developer</td>
+            <td>Deploying applications into hosted environments such as Cloud Foundry.</td>
+        </tr>
+        <tr>
+            <td><strong>ALM Engineer</strong></td>
+            <td><strong>Managing lifecycle, reliability, observability, automation, and risk.</strong></td>
+        </tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>Core Concept 1: Observability</h2>
+
+    <p>
+        Observability is the ability to understand what your system is doing without needing to guess. It answers practical
+        questions: Is the application working? If it failed, where did it fail? How often does that happen? Which part of the
+        system is responsible?
+    </p>
+
+    <p>
+        When you ran your OCR application locally, you could see the console, the errors, and the files being created.
+        Once the application is deployed to the cloud, that visibility becomes less obvious. A user may upload a PDF, the
+        API may fail, the OCR engine may return poor text, or the parser may miss a field. Without observability, you are
+        forced to guess.
+    </p>
+
+    <h3>The Three Pillars</h3>
+    <table class="mini-table">
+        <tr>
+            <th>Pillar</th>
+            <th>Question It Answers</th>
+            <th>Example</th>
+        </tr>
+        <tr>
+            <td>Logs</td>
+            <td>What happened?</td>
+            <td>“OCR extraction started”, “Invoice number not found”.</td>
+        </tr>
+        <tr>
+            <td>Metrics</td>
+            <td>How often or how much?</td>
+            <td>Request count, error rate, average processing time.</td>
+        </tr>
+        <tr>
+            <td>Traces</td>
+            <td>Where did the request go?</td>
+            <td>Upload → API → OCR → parsing → JSON response.</td>
+        </tr>
+    </table>
+
+    <h3>Simple Example from Your OCR App</h3>
+    <p>
+        A beginner version of the code may simply extract text. An observable version tells you what is happening.
+    </p>
+
+    <div class="code-block">print("Starting OCR extraction")
+text = pytesseract.image_to_string(page)
+print(f"Extracted {len(text)} characters")</div>
+
+    <div class="callout success">
+        <strong>Key idea:</strong> If you cannot observe your system, you cannot trust it.
+    </div>
+
+    <button class="accordion">How this maps back to ABAP thinking</button>
+    <div class="panel">
+        <p>
+            In ABAP, you may rely on dumps, application logs, job logs, SLG1, ST22, SM37, or trace tools.
+            In cloud applications, you need the same mindset, but the tools change. Your first version might use
+            simple logging. Later, you may use structured logs, metrics platforms, OpenTelemetry, or cloud-native logging.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Core Concept 2: Automation-First Mindset</h2>
+
+    <p>
+        Automation-first means designing systems under the assumption that humans should not be required for repetitive,
+        predictable, or high-volume tasks. This does not mean humans are removed from accountability. It means humans are
+        moved away from low-value repetition and toward review, exception handling, and improvement.
+    </p>
+
+    <p>
+        Think back to the OCR project. Without automation, a person uploads a file, reads the results manually, and enters
+        data into another system. With automation, the file can be sent to an API, text can be extracted, fields can be parsed,
+        and structured JSON can be consumed by another workflow.
+    </p>
+
+    <div class="quote-box">
+        If you do something more than twice, automate it. If it is critical, automate it with validation.
+    </div>
+
+    <p>
+        There is a difference between a script and automation. A script may solve a task once. Automation solves the task
+        repeatedly, handles errors, produces consistent results, and fits into a broader process.
+    </p>
+
+    <table class="mini-table">
+        <tr>
+            <th>Script Thinking</th>
+            <th>Automation Thinking</th>
+        </tr>
+        <tr>
+            <td>“Run this file when I need it.”</td>
+            <td>“Make this process repeatable and reliable.”</td>
+        </tr>
+        <tr>
+            <td>Assumes valid input.</td>
+            <td>Validates input and handles exceptions.</td>
+        </tr>
+        <tr>
+            <td>Outputs to screen.</td>
+            <td>Outputs to files, APIs, logs, or downstream systems.</td>
+        </tr>
+        <tr>
+            <td>Useful for the developer.</td>
+            <td>Useful for the process.</td>
+        </tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>Core Concept 3: Risk-Based Thinking</h2>
+
+    <p>
+        Risk-based thinking means asking what can go wrong and how bad the impact would be. In enterprise systems, not every
+        failure deserves the same level of attention. A visual formatting issue is not the same as incorrect financial data.
+    </p>
+
+    <p>
+        In many business environments, the most dangerous failure is not a loud crash. It is a quiet, believable mistake.
+        A system that fails visibly can be investigated. A system that returns wrong information confidently can create real
+        operational risk.
+    </p>
+
+    <table class="mini-table">
+        <tr>
+            <th>Scenario</th>
+            <th>Risk Level</th>
+            <th>Why</th>
+        </tr>
+        <tr>
+            <td>OCR fails to read a non-critical footer.</td>
+            <td>Low</td>
+            <td>The business process can continue.</td>
+        </tr>
+        <tr>
+            <td>API returns no data for a valid request.</td>
+            <td>Medium</td>
+            <td>The user may be blocked or confused.</td>
+        </tr>
+        <tr>
+            <td>Wrong invoice total is extracted.</td>
+            <td>High</td>
+            <td>Incorrect financial data could move downstream.</td>
+        </tr>
+        <tr>
+            <td>Incorrect data is posted automatically to SAP.</td>
+            <td>Critical</td>
+            <td>The failure affects system-of-record data.</td>
+        </tr>
+    </table>
+
+    <p>
+        Applying this to your OCR tool, you should ask: What if OCR misreads a number? What if the invoice is formatted
+        differently? What if the total is missing? What if a corrupted file is uploaded? What if an API consumer trusts
+        incomplete JSON?
+    </p>
+
+    <div class="code-block">if not invoice:
+    print("Warning: Invoice not found")
+
+if not total:
+    print("Warning: Total not found")</div>
+
+    <div class="callout warning">
+        <strong>Risk mindset:</strong> Defensive logic is not extra work. It is risk mitigation.
+    </div>
+</div>
+
+<div class="section">
+    <h2>The Modern Development Lifecycle in a Cloud and AI World</h2>
+
+    <p>
+        The development route for an ABAP developer expanding into Python, cloud, and AI is no longer a simple
+        “code, test, transport” pattern. The modern route is more continuous and more connected. AI may help generate an
+        initial solution, but the engineer still owns validation, testing, risk review, deployment, monitoring, and feedback.
+    </p>
+
+    <div class="workflow">
+        <div class="step"><strong>Prompt / Design</strong><span>Describe the problem clearly</span></div>
+        <div class="step"><strong>Generate / Build</strong><span>Use AI and Python tooling</span></div>
+        <div class="step"><strong>Risk Review</strong><span>Identify failure impact</span></div>
+        <div class="step"><strong>Test</strong><span>Validate with real cases</span></div>
+        <div class="step"><strong>Feedback</strong><span>Collect user input</span></div>
+    </div>
+
+    <div class="workflow">
+        <div class="step"><strong>Git Push</strong><span>Version the change</span></div>
+        <div class="step"><strong>CI/CD</strong><span>Automate checks</span></div>
+        <div class="step"><strong>Cloud Push</strong><span>Deploy to runtime</span></div>
+        <div class="step"><strong>Interface</strong><span>Expose API or UI</span></div>
+        <div class="step"><strong>Observe</strong><span>Monitor and improve</span></div>
+    </div>
+
+    <div class="callout info">
+        <strong>BPMN-style interpretation:</strong> The first lane is design and validation. The second lane is controlled delivery
+        and operation. Together, they describe how modern SAP-adjacent engineering works.
+    </div>
+
+    <div class="mock-window">
+        <div class="mock-title">Modern ABAP Developer Route: Cloud + AI Lifecycle</div>
+        <div class="mock-body">
+            <p><strong>Start:</strong> Business problem or manual process</p>
+            <p>→ Prompt with context and constraints</p>
+            <p>→ Generate initial Python / Flask / API code</p>
+            <p>→ Review for security, correctness, and risk</p>
+            <p>→ Test with real input and edge cases</p>
+            <p>→ Gather feedback from users or process owners</p>
+            <p>→ Commit to Git and trigger pipeline</p>
+            <p>→ Deploy to Cloud Foundry or another runtime</p>
+            <p>→ Expose interface through UI, API, JSON feed, or automation workflow</p>
+            <p><strong>End:</strong> Monitor, improve, and repeat</p>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Where AI Fits In</h2>
+
+    <p>
+        AI is now part of the developer workflow, but it is not the owner of the workflow. AI can generate boilerplate,
+        suggest regex patterns, explain errors, help restructure code, and create first drafts of documentation. Those are
+        valuable accelerators.
+    </p>
+
+    <p>
+        But AI does not understand your specific business process, your company’s risk tolerance, your production landscape,
+        or the downstream impact of incorrect data. That remains your responsibility.
+    </p>
+
+    <table class="mini-table">
+        <tr>
+            <th>AI Can Help With</th>
+            <th>You Still Own</th>
+        </tr>
+        <tr>
+            <td>Generating starter Flask routes.</td>
+            <td>Validating security and correctness.</td>
+        </tr>
+        <tr>
+            <td>Suggesting regex patterns.</td>
+            <td>Testing against real OCR output.</td>
+        </tr>
+        <tr>
+            <td>Explaining error messages.</td>
+            <td>Deciding the proper fix.</td>
+        </tr>
+        <tr>
+            <td>Drafting documentation.</td>
+            <td>Making sure it matches reality.</td>
+        </tr>
+    </table>
+
+    <div class="callout success">
+        <strong>Modern engineer rule:</strong> Use AI to accelerate the work, not to bypass understanding.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Putting It All Together: Your Journey in This Book</h2>
+
+    <p>
+        The OCR project is a good example of how the whole book connects. You started with Python basics, learned how to
+        structure data, built a web interface, deployed to the cloud, exposed a JSON API, and used AI to accelerate the process.
+        Each step added capability, but the final lesson is about responsibility.
+    </p>
+
+    <table class="mini-table">
+        <tr>
+            <th>What You Built</th>
+            <th>What It Taught</th>
+        </tr>
+        <tr>
+            <td>Python data scripts</td>
+            <td>How to manipulate files, tables, and structured data.</td>
+        </tr>
+        <tr>
+            <td>Flask app</td>
+            <td>How to create user-facing tools outside SAP.</td>
+        </tr>
+        <tr>
+            <td>BTP deployment</td>
+            <td>How local tools become hosted services.</td>
+        </tr>
+        <tr>
+            <td>API and JSON output</td>
+            <td>How systems communicate across boundaries.</td>
+        </tr>
+        <tr>
+            <td>OCR automation</td>
+            <td>How unstructured documents become structured business data.</td>
+        </tr>
+        <tr>
+            <td>AI-assisted development</td>
+            <td>How to accelerate development while staying accountable.</td>
+        </tr>
+    </table>
+</div>
+
+<div class="section">
+    <h2>ALM Checklist: Use This Before Deploying Anything</h2>
+
+    <p>
+        Before deploying any tool, service, API, or automation, ask these questions. This checklist is intentionally practical.
+        It is meant to slow you down just enough to avoid preventable failures.
+    </p>
+
+    <div class="code-block">- Can I observe it?
+- Can I automate it?
+- What happens if it fails?
+- Who is impacted?
+- Is the output trustworthy?
+- Can it scale?
+- Is it secure?
+- Can another system use it safely?
+- Is there a rollback or recovery path?
+- Did I test the ugly cases, not just the happy path?</div>
+
+    <div class="callout info">
+        <strong>Checkpoint:</strong> If you can answer these questions clearly, you are no longer just building a script.
+        You are engineering a system.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Final Thought</h2>
+
+    <p>
+        There is a difference between writing code and building systems. Writing code solves an immediate problem.
+        Building systems creates something that can be trusted, reused, supported, and improved.
+    </p>
+
+    <div class="quote-box">
+        ABAP developers solve problems inside SAP.<br>
+        ALM Engineers solve problems across systems.
+    </div>
+
+    <p>
+        You now have the tools and the mindset to do both. Python does not replace your ABAP background. It expands it.
+        Cloud does not erase SAP discipline. It gives it a wider stage. AI does not remove the need for engineering judgment.
+        It makes that judgment even more important.
+    </p>
+</div>
+
+<div class="section">
+    <h2>Suggested Further Reading</h2>
+    <p>
+        These references can help you go deeper after finishing this book.
+    </p>
+
+    <ul class="ref-list">
+        <li><a href="https://sre.google/sre-book/" target="_blank">Google SRE Book</a> — reliability, operations, and production engineering.</li>
+        <li><a href="https://opentelemetry.io/docs/concepts/observability/" target="_blank">OpenTelemetry Observability Concepts</a> — logs, metrics, and traces.</li>
+        <li><a href="https://martinfowler.com/articles/continuousIntegration.html" target="_blank">Martin Fowler: Continuous Integration</a> — foundational CI thinking.</li>
+        <li><a href="https://platform.openai.com/docs/guides/prompt-engineering" target="_blank">OpenAI Prompt Engineering Guide</a> — structured prompting and AI-assisted workflows.</li>
+        <li><a href="https://docs.cloudfoundry.org/devguide/deploy-apps/manifest.html" target="_blank">Cloud Foundry App Manifests</a> — deployment configuration basics.</li>
+        <li><a href="https://12factor.net/" target="_blank">The Twelve-Factor App</a> — principles for cloud-native applications.</li>
+    </ul>
+</div>
+
+<p class="footer-note">
+    Think Like Python: A Guide for ABAP Developers — Chapter 11
+</p>
+
+</div>
+
+<script>
+var acc = document.getElementsByClassName("accordion");
+for (var i = 0; i < acc.length; i++) {
+  acc[i].onclick = function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  }
+}
+</script>
+
+
+<div class="book-nav" style="position: static; margin-top: 30px;">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">End of Chapter 11</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-10-ai-ocr-api-deployment.html">Previous</a><a href="index.html">Back to Start</a></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  © 2026 Edwin A. Rodriguez — Think Like Python. All rights reserved.
+</footer>
+
+</body>
+</html>

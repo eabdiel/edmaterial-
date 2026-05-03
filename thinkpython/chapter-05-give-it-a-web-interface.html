@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 5 - Give It a Web Interface</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+    --navy: #0b1f3a;
+    --navy-soft: #12345f;
+    --teal: #13a89e;
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --text: #2d3748;
+    --muted: #64748b;
+    --code-bg: #1e1e1e;
+    --code-text: #f8f8f2;
+    --info-bg: #ecfeff;
+    --info-border: #06b6d4;
+    --warning-bg: #fff7ed;
+    --warning-border: #fb923c;
+    --success-bg: #f0fdf4;
+    --success-border: #22c55e;
+    --line: #dbeafe;
+}
+* { box-sizing: border-box; }
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+header {
+    background: linear-gradient(135deg, var(--navy), var(--navy-soft));
+    color: white;
+    padding: 48px 24px;
+    text-align: center;
+}
+header h1 { margin: 0; font-size: 2.25rem; }
+header p { color: #dbeafe; margin-top: 10px; }
+.container { max-width: 1180px; margin: auto; padding: 32px 20px 60px; }
+.section {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+h2, h3 { color: var(--navy); }
+h2 { margin-top: 0; }
+.badge {
+    display: inline-block;
+    background: var(--teal);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.code-block {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 16px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 0.92rem;
+    white-space: pre;
+}
+.callout { padding: 16px; border-radius: 10px; margin: 18px 0; }
+.callout.info { background: var(--info-bg); border-left: 5px solid var(--info-border); }
+.callout.warning { background: var(--warning-bg); border-left: 5px solid var(--warning-border); }
+.callout.success { background: var(--success-bg); border-left: 5px solid var(--success-border); }
+.side-by-side { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 14px; }
+.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.workflow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    align-items: stretch;
+    margin: 22px 0 6px;
+}
+.step {
+    background: #eef6ff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    position: relative;
+}
+.step strong { display: block; color: var(--navy); margin-bottom: 6px; }
+.step span { color: var(--muted); font-size: 0.9rem; }
+.step:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    right: -13px;
+    top: 40%;
+    color: var(--navy-soft);
+    font-weight: bold;
+}
+.mock-window {
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    margin-top: 14px;
+}
+.mock-title {
+    background: #e2e8f0;
+    padding: 10px 14px;
+    color: var(--navy);
+    font-weight: bold;
+    font-size: 0.92rem;
+}
+.mock-body { padding: 16px; }
+.form-preview label {
+    display: block;
+    font-weight: bold;
+    color: var(--navy);
+    margin-top: 12px;
+}
+.form-preview input, .form-preview select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    margin-top: 4px;
+}
+.fake-button {
+    display: inline-block;
+    margin-top: 16px;
+    background: var(--teal);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+.terminal {
+    background: #101827;
+    color: #d1fae5;
+    border-radius: 10px;
+    padding: 16px;
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    white-space: pre-wrap;
+    font-size: 0.92rem;
+}
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+}
+.preview-table th {
+    background: #e8eef7;
+    color: var(--navy);
+    text-align: left;
+}
+.preview-table th, .preview-table td {
+    border: 1px solid var(--line);
+    padding: 9px;
+}
+.file-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+    background: #f8fafc;
+}
+.file-icon { font-size: 2rem; margin-bottom: 8px; }
+.accordion {
+    cursor: pointer;
+    padding: 16px 18px;
+    width: 100%;
+    border: 1px solid var(--line);
+    text-align: left;
+    outline: none;
+    background-color: #e8eef7;
+    color: var(--navy);
+    margin-top: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+.accordion:hover { background-color: #dbeafe; }
+.panel {
+    padding: 0 18px 18px;
+    display: none;
+    background-color: white;
+    border: 1px solid #edf2f7;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+}
+.footer-note {
+    color: var(--muted);
+    font-size: 0.95rem;
+    text-align: center;
+    margin-top: 30px;
+}
+@media (max-width: 900px) {
+    .side-by-side, .three-col, .workflow { grid-template-columns: 1fr; }
+    .step:not(:last-child)::after {
+        content: "↓";
+        right: 50%;
+        top: auto;
+        bottom: -18px;
+    }
+}
+
+.book-nav {
+    background: #ffffff;
+    border-bottom: 1px solid #d9e2ec;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+.book-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.book-nav-title {
+    color: #0b1f3a;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+.book-nav-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.book-nav a {
+    color: #0b1f3a;
+    text-decoration: none;
+    border: 1px solid #c8d4e3;
+    background: #f8fafc;
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 0.92rem;
+}
+.book-nav a:hover {
+    background: #e8eef7;
+}
+.book-nav a.primary-link {
+    background: #0b1f3a;
+    color: #ffffff;
+    border-color: #0b1f3a;
+}
+.chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+.chapter-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.06);
+}
+.chapter-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(11,31,58,0.12);
+}
+.chapter-card .eyebrow {
+    color: #13a89e;
+    font-weight: 700;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.chapter-card h3 {
+    margin: 8px 0;
+    color: #0b1f3a;
+}
+.chapter-card p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+@media (max-width: 700px) {
+    .book-nav-inner { align-items: flex-start; }
+    .book-nav-links { width: 100%; }
+    .book-nav a { flex: 1 1 auto; text-align: center; }
+}
+
+
+.site-footer {
+    text-align: center;
+    margin: 42px auto 24px;
+    padding: 18px 20px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+</style>
+</head>
+
+<body>
+<nav class="book-nav" aria-label="Book navigation">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">Think Like Python</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-04-from-script-to-tool.html">Previous</a><a href="chapter-06-make-the-flask-report-useful.html">Next</a></div>
+  </div>
+</nav>
+
+
+<header>
+    <h1>Chapter 5: Give It a Web Interface</h1>
+    <p>Turning your parameterized Python report into a simple Flask app</p>
+</header>
+
+<div class="container">
+
+<div class="section">
+    <span class="badge">Chapter Goal</span>
+    <h2>From Command Line to Browser Form</h2>
+    <p>
+        In Chapter 4, we made the report more useful by passing parameters from the command line.
+        That was a big improvement, but most business users do not want to run commands.
+    </p>
+    <p>
+        In this chapter, we move the same logic into a simple Flask web app. The user will open a browser,
+        choose filters from a form, and see the report output on the page.
+    </p>
+
+    <div class="workflow">
+        <div class="step"><strong>Open App</strong><span>Browser page</span></div>
+        <div class="step"><strong>Enter Filters</strong><span>Material type + plant</span></div>
+        <div class="step"><strong>Submit</strong><span>POST request</span></div>
+        <div class="step"><strong>Process</strong><span>pandas filtering</span></div>
+        <div class="step"><strong>Display</strong><span>HTML table</span></div>
+    </div>
+
+    <div class="callout success">
+        <strong>Big idea:</strong> Flask lets you wrap your Python logic in a browser interface without jumping straight into a full enterprise app.
+    </div>
+</div>
+
+<div class="section">
+    <h2>ABAP Selection Screen vs Flask Form</h2>
+    <p>
+        The mental model is familiar. In ABAP, the selection screen collects inputs before the report runs.
+        In Flask, an HTML form collects inputs before the Python function processes them.
+    </p>
+
+    <div class="side-by-side">
+        <div>
+            <h3>ABAP</h3>
+            <div class="code-block">PARAMETERS: p_mtart TYPE mtart DEFAULT 'FERT',
+            p_plant TYPE werks_d DEFAULT '1000'.
+
+START-OF-SELECTION.
+
+SELECT matnr, maktx, mtart, plant, stock
+  FROM zmaterial_stock
+  INTO TABLE @DATA(lt_materials)
+  WHERE mtart = @p_mtart
+    AND plant = @p_plant.</div>
+        </div>
+
+        <div>
+            <h3>Flask Form Preview</h3>
+            <div class="mock-window">
+                <div class="mock-title">http://127.0.0.1:5000</div>
+                <div class="mock-body form-preview">
+                    <label>Material Type</label>
+                    <select>
+                        <option>FERT</option>
+                        <option>HALB</option>
+                        <option>ROH</option>
+                        <option>HAWA</option>
+                    </select>
+                    <label>Plant</label>
+                    <input value="1000">
+                    <span class="fake-button">Generate Report</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="callout info">
+        <strong>Python translation:</strong> Flask gives you routes. A route is a URL that runs a Python function.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 1: Install Flask</h2>
+    <p>
+        Activate your virtual environment, then install Flask.
+    </p>
+
+    <div class="code-block">python -m pip install flask pandas openpyxl</div>
+
+    <p>
+        Update your <strong>requirements.txt</strong>:
+    </p>
+
+    <div class="code-block">python -m pip freeze &gt; requirements.txt</div>
+
+    <button class="accordion">What is Flask?</button>
+    <div class="panel">
+        <p>
+            Flask is a lightweight Python web framework. It lets you define URLs, receive form input, run Python logic,
+            and return HTML pages to the browser.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 2: Project Folder Structure</h2>
+    <p>
+        Flask projects can grow quickly, but we will keep this one simple.
+    </p>
+
+    <div class="code-block">think-like-python-flask-report/
+│
+├── app.py
+├── materials.csv
+├── requirements.txt
+└── templates/
+    └── index.html</div>
+
+    <div class="three-col">
+        <div class="file-card">
+            <div class="file-icon">🐍</div>
+            <strong>app.py</strong>
+            <p>The Python Flask application.</p>
+        </div>
+        <div class="file-card">
+            <div class="file-icon">📄</div>
+            <strong>materials.csv</strong>
+            <p>The sample material data.</p>
+        </div>
+        <div class="file-card">
+            <div class="file-icon">🌐</div>
+            <strong>templates/index.html</strong>
+            <p>The browser form and report page.</p>
+        </div>
+    </div>
+
+    <div class="callout warning">
+        <strong>Important:</strong> The folder must be named <strong>templates</strong>. Flask looks for HTML templates there by default.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 3: Create the Flask App</h2>
+    <p>
+        Create a file named <strong>app.py</strong>. This file will load the CSV, receive form values, filter the data,
+        and send results to the HTML page.
+    </p>
+
+    <div class="code-block">from flask import Flask, render_template, request
+import pandas as pd
+
+app = Flask(__name__)
+
+DATA_FILE = "materials.csv"
+
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    df = pd.read_csv(DATA_FILE)
+
+    material_type = "FERT"
+    plant = "1000"
+    records = []
+    message = ""
+
+    if request.method == "POST":
+        material_type = request.form.get("material_type", "FERT")
+        plant = request.form.get("plant", "1000")
+
+        filtered_df = df[
+            (df["mtart"] == material_type) &
+            (df["plant"].astype(str) == plant)
+        ]
+
+        filtered_df = filtered_df.sort_values(by="stock", ascending=False)
+
+        if filtered_df.empty:
+            message = "No records found for the selected filters."
+        else:
+            records = filtered_df.to_dict(orient="records")
+            message = f"Found {len(records)} record(s)."
+
+    return render_template(
+        "index.html",
+        material_type=material_type,
+        plant=plant,
+        records=records,
+        message=message
+    )
+
+
+if __name__ == "__main__":
+    app.run(debug=True)</div>
+
+    <button class="accordion">What does @app.route mean?</button>
+    <div class="panel">
+        <p>
+            <strong>@app.route("/")</strong> means this function runs when the user visits the home page of the app.
+            The slash represents the root URL, like <strong>http://127.0.0.1:5000/</strong>.
+        </p>
+    </div>
+
+    <button class="accordion">What is request.form?</button>
+    <div class="panel">
+        <p>
+            <strong>request.form</strong> contains the values submitted by the HTML form. This is how the selected material type
+            and plant get from the browser into Python.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 4: Create the HTML Template</h2>
+    <p>
+        Create a folder named <strong>templates</strong>, then create a file inside it named <strong>index.html</strong>.
+    </p>
+
+    <div class="code-block">&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;Material Report&lt;/title&gt;
+    &lt;style&gt;
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            margin: 0;
+            padding: 30px;
+            color: #2d3748;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+
+        h1 {
+            color: #0b1f3a;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 4px;
+        }
+
+        button {
+            margin-top: 18px;
+            background: #13a89e;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 22px;
+        }
+
+        th, td {
+            border: 1px solid #dbeafe;
+            padding: 9px;
+            text-align: left;
+        }
+
+        th {
+            background: #e8eef7;
+            color: #0b1f3a;
+        }
+
+        .message {
+            margin-top: 18px;
+            background: #ecfeff;
+            border-left: 5px solid #06b6d4;
+            padding: 12px;
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;div class="container"&gt;
+
+    &lt;h1&gt;Material Report&lt;/h1&gt;
+    &lt;p&gt;Select your filters and generate the report.&lt;/p&gt;
+
+    &lt;form method="POST"&gt;
+        &lt;label&gt;Material Type&lt;/label&gt;
+        &lt;select name="material_type"&gt;
+            &lt;option value="FERT"&gt;FERT&lt;/option&gt;
+            &lt;option value="HALB"&gt;HALB&lt;/option&gt;
+            &lt;option value="ROH"&gt;ROH&lt;/option&gt;
+            &lt;option value="HAWA"&gt;HAWA&lt;/option&gt;
+        &lt;/select&gt;
+
+        &lt;label&gt;Plant&lt;/label&gt;
+        &lt;input name="plant" value="{{ plant }}"&gt;
+
+        &lt;button type="submit"&gt;Generate Report&lt;/button&gt;
+    &lt;/form&gt;
+
+    {% if message %}
+        &lt;div class="message"&gt;{{ message }}&lt;/div&gt;
+    {% endif %}
+
+    {% if records %}
+        &lt;table&gt;
+            &lt;tr&gt;
+                &lt;th&gt;Material&lt;/th&gt;
+                &lt;th&gt;Description&lt;/th&gt;
+                &lt;th&gt;Type&lt;/th&gt;
+                &lt;th&gt;Plant&lt;/th&gt;
+                &lt;th&gt;Stock&lt;/th&gt;
+            &lt;/tr&gt;
+
+            {% for row in records %}
+            &lt;tr&gt;
+                &lt;td&gt;{{ row.matnr }}&lt;/td&gt;
+                &lt;td&gt;{{ row.maktx }}&lt;/td&gt;
+                &lt;td&gt;{{ row.mtart }}&lt;/td&gt;
+                &lt;td&gt;{{ row.plant }}&lt;/td&gt;
+                &lt;td&gt;{{ row.stock }}&lt;/td&gt;
+            &lt;/tr&gt;
+            {% endfor %}
+        &lt;/table&gt;
+    {% endif %}
+
+&lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</div>
+
+    <button class="accordion">What are the curly braces?</button>
+    <div class="panel">
+        <p>
+            Flask uses a template engine called Jinja. Values like <strong>{{ plant }}</strong> are replaced with Python values.
+            Blocks like <strong>{% for row in records %}</strong> loop through data sent from <strong>app.py</strong>.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Step 5: Run the App</h2>
+    <p>
+        From the project folder, run:
+    </p>
+
+    <div class="code-block">python app.py</div>
+
+    <p>
+        You should see output similar to this:
+    </p>
+
+    <div class="mock-window">
+        <div class="mock-title">Terminal Preview</div>
+        <div class="mock-body">
+            <div class="terminal">* Serving Flask app 'app'
+* Debug mode: on
+* Running on http://127.0.0.1:5000
+
+Press CTRL+C to quit</div>
+        </div>
+    </div>
+
+    <p>
+        Open your browser and go to:
+    </p>
+
+    <div class="code-block">http://127.0.0.1:5000</div>
+
+    <div class="callout warning">
+        <strong>Local only:</strong> This runs on your machine. Other users cannot access it yet. Deployment comes later.
+    </div>
+</div>
+
+<div class="section">
+    <h2>What You Should See</h2>
+    <p>
+        The app should show a small form. After submitting, it should show matching records.
+    </p>
+
+    <div class="side-by-side">
+        <div>
+            <h3>Before Submit</h3>
+            <div class="mock-window">
+                <div class="mock-title">Material Report</div>
+                <div class="mock-body form-preview">
+                    <label>Material Type</label>
+                    <select><option>FERT</option></select>
+                    <label>Plant</label>
+                    <input value="1000">
+                    <span class="fake-button">Generate Report</span>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <h3>After Submit</h3>
+            <div class="mock-window">
+                <div class="mock-title">Material Report Results</div>
+                <div class="mock-body">
+                    <div style="background:#ecfeff;border-left:5px solid #06b6d4;padding:10px;margin-bottom:12px;">Found 2 record(s).</div>
+                    <table class="preview-table">
+                        <tr>
+                            <th>Material</th>
+                            <th>Description</th>
+                            <th>Type</th>
+                            <th>Plant</th>
+                            <th>Stock</th>
+                        </tr>
+                        <tr><td>1006</td><td>Demo Finished Product 3</td><td>FERT</td><td>1000</td><td>67</td></tr>
+                        <tr><td>1001</td><td>Demo Finished Product</td><td>FERT</td><td>1000</td><td>45</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>What Just Happened?</h2>
+    <p>
+        The Flask app follows a simple request-response pattern.
+    </p>
+
+    <div class="workflow">
+        <div class="step"><strong>GET</strong><span>Show empty form</span></div>
+        <div class="step"><strong>POST</strong><span>User submits form</span></div>
+        <div class="step"><strong>Filter</strong><span>Python processes data</span></div>
+        <div class="step"><strong>Render</strong><span>Template receives records</span></div>
+        <div class="step"><strong>Result</strong><span>Browser displays table</span></div>
+    </div>
+
+    <div class="callout info">
+        <strong>ABAP comparison:</strong> Think of <strong>GET</strong> as displaying the selection screen and
+        <strong>POST</strong> as pressing execute.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Common Beginner Issues</h2>
+
+    <button class="accordion">Problem: TemplateNotFound: index.html</button>
+    <div class="panel">
+        <p>
+            Make sure the file is located here:
+        </p>
+        <div class="code-block">templates/index.html</div>
+        <p>
+            The folder must be named exactly <strong>templates</strong>.
+        </p>
+    </div>
+
+    <button class="accordion">Problem: materials.csv not found</button>
+    <div class="panel">
+        <p>
+            Make sure <strong>materials.csv</strong> is in the same folder as <strong>app.py</strong>.
+        </p>
+    </div>
+
+    <button class="accordion">Problem: Port already in use</button>
+    <div class="panel">
+        <p>
+            Another app may already be running on port 5000. Stop the previous Flask app with <strong>CTRL+C</strong>,
+            or run on another port:
+        </p>
+        <div class="code-block">app.run(debug=True, port=5001)</div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Try This</h2>
+    <ul>
+        <li>Add another dropdown for material group.</li>
+        <li>Add a minimum stock input.</li>
+        <li>Show the number of total records before filtering.</li>
+        <li>Change the page title to include the selected plant.</li>
+        <li>Add a link to download the Excel export in a future version.</li>
+    </ul>
+
+    <button class="accordion">Stretch goal: add minimum stock</button>
+    <div class="panel">
+        <p>Add this input to the HTML form:</p>
+        <div class="code-block">&lt;label&gt;Minimum Stock&lt;/label&gt;
+&lt;input name="min_stock" value="0"&gt;</div>
+        <p>Then read and apply it in Python:</p>
+        <div class="code-block">min_stock = int(request.form.get("min_stock", 0))
+
+filtered_df = filtered_df[
+    filtered_df["stock"] &gt;= min_stock
+]</div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Chapter 5 Checkpoint</h2>
+    <ul>
+        <li>You understand how a Flask route maps a URL to a Python function.</li>
+        <li>You can show an HTML form in the browser.</li>
+        <li>You can receive form values with <strong>request.form</strong>.</li>
+        <li>You can filter a pandas DataFrame based on browser input.</li>
+        <li>You can render filtered records into an HTML table.</li>
+        <li>You understand the GET vs POST flow at a beginner level.</li>
+    </ul>
+
+    <div class="callout success">
+        <strong>Next:</strong> Chapter 6 should make this web app feel more like a practical reporting tool:
+        export button, cleaner layout, and a chart on the results page.
+    </div>
+</div>
+
+<p class="footer-note">
+    Think Like Python: A Guide for ABAP Developers — Chapter 5
+</p>
+
+</div>
+
+<script>
+var acc = document.getElementsByClassName("accordion");
+for (var i = 0; i < acc.length; i++) {
+  acc[i].onclick = function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  }
+}
+</script>
+
+
+<div class="book-nav" style="position: static; margin-top: 30px;">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">End of Chapter 5</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-04-from-script-to-tool.html">Previous</a><a href="chapter-06-make-the-flask-report-useful.html">Next</a></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  © 2026 Edwin A. Rodriguez — Think Like Python. All rights reserved.
+</footer>
+
+</body>
+</html>

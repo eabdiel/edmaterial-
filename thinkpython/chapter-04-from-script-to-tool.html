@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Chapter 4 - From Script to Tool</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root {
+    --navy: #0b1f3a;
+    --navy-soft: #12345f;
+    --teal: #13a89e;
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --text: #2d3748;
+    --muted: #64748b;
+    --code-bg: #1e1e1e;
+    --code-text: #f8f8f2;
+    --info-bg: #ecfeff;
+    --info-border: #06b6d4;
+    --warning-bg: #fff7ed;
+    --warning-border: #fb923c;
+    --success-bg: #f0fdf4;
+    --success-border: #22c55e;
+    --line: #dbeafe;
+}
+* { box-sizing: border-box; }
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+header {
+    background: linear-gradient(135deg, var(--navy), var(--navy-soft));
+    color: white;
+    padding: 48px 24px;
+    text-align: center;
+}
+header h1 { margin: 0; font-size: 2.25rem; }
+header p { color: #dbeafe; margin-top: 10px; }
+.container { max-width: 1180px; margin: auto; padding: 32px 20px 60px; }
+.section {
+    background: var(--card);
+    border-radius: 14px;
+    padding: 26px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+h2, h3 { color: var(--navy); }
+h2 { margin-top: 0; }
+.badge {
+    display: inline-block;
+    background: var(--teal);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.code-block {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 16px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    font-size: 0.92rem;
+    white-space: pre;
+}
+.callout { padding: 16px; border-radius: 10px; margin: 18px 0; }
+.callout.info { background: var(--info-bg); border-left: 5px solid var(--info-border); }
+.callout.warning { background: var(--warning-bg); border-left: 5px solid var(--warning-border); }
+.callout.success { background: var(--success-bg); border-left: 5px solid var(--success-border); }
+.side-by-side { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 14px; }
+.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.workflow {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    align-items: stretch;
+    margin: 22px 0 6px;
+}
+.step {
+    background: #eef6ff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    position: relative;
+}
+.step strong { display: block; color: var(--navy); margin-bottom: 6px; }
+.step span { color: var(--muted); font-size: 0.9rem; }
+.step:not(:last-child)::after {
+    content: "→";
+    position: absolute;
+    right: -13px;
+    top: 40%;
+    color: var(--navy-soft);
+    font-weight: bold;
+}
+.mock-window {
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    margin-top: 14px;
+}
+.mock-title {
+    background: #e2e8f0;
+    padding: 10px 14px;
+    color: var(--navy);
+    font-weight: bold;
+    font-size: 0.92rem;
+}
+.mock-body { padding: 16px; }
+.terminal {
+    background: #101827;
+    color: #d1fae5;
+    border-radius: 10px;
+    padding: 16px;
+    font-family: Consolas, Monaco, "Courier New", monospace;
+    white-space: pre-wrap;
+    font-size: 0.92rem;
+}
+.form-preview label {
+    display: block;
+    font-weight: bold;
+    color: var(--navy);
+    margin-top: 12px;
+}
+.form-preview input, .form-preview select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    margin-top: 4px;
+}
+.fake-button {
+    display: inline-block;
+    margin-top: 16px;
+    background: var(--teal);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+.preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+}
+.preview-table th {
+    background: #e8eef7;
+    color: var(--navy);
+    text-align: left;
+}
+.preview-table th, .preview-table td {
+    border: 1px solid var(--line);
+    padding: 9px;
+}
+.file-card {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 16px;
+    background: #f8fafc;
+}
+.file-icon { font-size: 2rem; margin-bottom: 8px; }
+.accordion {
+    cursor: pointer;
+    padding: 16px 18px;
+    width: 100%;
+    border: 1px solid var(--line);
+    text-align: left;
+    outline: none;
+    background-color: #e8eef7;
+    color: var(--navy);
+    margin-top: 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 1rem;
+}
+.accordion:hover { background-color: #dbeafe; }
+.panel {
+    padding: 0 18px 18px;
+    display: none;
+    background-color: white;
+    border: 1px solid #edf2f7;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+}
+.footer-note {
+    color: var(--muted);
+    font-size: 0.95rem;
+    text-align: center;
+    margin-top: 30px;
+}
+@media (max-width: 900px) {
+    .side-by-side, .three-col, .workflow { grid-template-columns: 1fr; }
+    .step:not(:last-child)::after {
+        content: "↓";
+        right: 50%;
+        top: auto;
+        bottom: -18px;
+    }
+}
+
+.book-nav {
+    background: #ffffff;
+    border-bottom: 1px solid #d9e2ec;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.08);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+}
+.book-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.book-nav-title {
+    color: #0b1f3a;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+.book-nav-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.book-nav a {
+    color: #0b1f3a;
+    text-decoration: none;
+    border: 1px solid #c8d4e3;
+    background: #f8fafc;
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 0.92rem;
+}
+.book-nav a:hover {
+    background: #e8eef7;
+}
+.book-nav a.primary-link {
+    background: #0b1f3a;
+    color: #ffffff;
+    border-color: #0b1f3a;
+}
+.chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+.chapter-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: #ffffff;
+    border: 1px solid #d9e2ec;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(11,31,58,0.06);
+}
+.chapter-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(11,31,58,0.12);
+}
+.chapter-card .eyebrow {
+    color: #13a89e;
+    font-weight: 700;
+    font-size: .85rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+.chapter-card h3 {
+    margin: 8px 0;
+    color: #0b1f3a;
+}
+.chapter-card p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.5;
+}
+@media (max-width: 700px) {
+    .book-nav-inner { align-items: flex-start; }
+    .book-nav-links { width: 100%; }
+    .book-nav a { flex: 1 1 auto; text-align: center; }
+}
+
+
+.site-footer {
+    text-align: center;
+    margin: 42px auto 24px;
+    padding: 18px 20px;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+</style>
+</head>
+
+<body>
+<nav class="book-nav" aria-label="Book navigation">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">Think Like Python</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-03-make-it-useful.html">Previous</a><a href="chapter-05-give-it-a-web-interface.html">Next</a></div>
+  </div>
+</nav>
+
+
+<header>
+    <h1>Chapter 4: From Script to Tool</h1>
+    <p>Translating ABAP selection-screen thinking into Python parameters and user input</p>
+</header>
+
+<div class="container">
+
+<div class="section">
+    <span class="badge">Chapter Goal</span>
+    <h2>Give the User Control</h2>
+    <p>
+        In Chapter 3, the report was useful, but it still had one major limitation: the filter was hardcoded in the script.
+        That means the developer controls the report instead of the user.
+    </p>
+    <p>
+        ABAP developers already know this problem. That is why ABAP reports often use <strong>PARAMETERS</strong> and
+        <strong>SELECT-OPTIONS</strong>. In this chapter, we recreate that idea in Python.
+    </p>
+
+    <div class="workflow">
+        <div class="step"><strong>Hardcoded</strong><span>Filter lives in code</span></div>
+        <div class="step"><strong>Prompt</strong><span>Ask user while running</span></div>
+        <div class="step"><strong>Argument</strong><span>Pass value at runtime</span></div>
+        <div class="step"><strong>Validate</strong><span>Handle bad input</span></div>
+        <div class="step"><strong>Report</strong><span>Generate output</span></div>
+    </div>
+
+    <div class="callout success">
+        <strong>Big idea:</strong> A script becomes a tool when the user can control it without editing the source code.
+    </div>
+</div>
+
+<div class="section">
+    <h2>The ABAP Pattern: Selection Screen</h2>
+    <p>
+        In ABAP, you might let the user choose material type and plant before the report runs.
+    </p>
+
+    <div class="side-by-side">
+        <div>
+            <h3>ABAP Example</h3>
+            <div class="code-block">PARAMETERS: p_mtart TYPE mtart DEFAULT 'FERT',
+            p_plant TYPE werks_d DEFAULT '1000'.
+
+SELECT matnr, maktx, mtart, plant, stock
+  FROM zmaterial_stock
+  INTO TABLE @DATA(lt_materials)
+  WHERE mtart = @p_mtart
+    AND plant = @p_plant.</div>
+        </div>
+        <div>
+            <h3>What users understand</h3>
+            <div class="mock-window">
+                <div class="mock-title">Selection Screen Preview</div>
+                <div class="mock-body form-preview">
+                    <label>Material Type</label>
+                    <input value="FERT">
+                    <label>Plant</label>
+                    <input value="1000">
+                    <span class="fake-button">Execute Report</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="callout info">
+        <strong>Python translation:</strong> We can start with simple terminal input, then move to command-line arguments,
+        and later to a real web form.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Option 1: Ask the User with input()</h2>
+    <p>
+        The simplest way to get user input in Python is the built-in <strong>input()</strong> function.
+        This is not fancy, but it is easy to understand.
+    </p>
+
+    <div class="code-block">material_type = input("Enter material type, for example FERT: ")
+plant = input("Enter plant, for example 1000: ")
+
+filtered_df = df[
+    (df["mtart"] == material_type) &
+    (df["plant"].astype(str) == plant)
+]</div>
+
+    <h3>Expected terminal behavior</h3>
+    <div class="mock-window">
+        <div class="mock-title">Terminal Preview</div>
+        <div class="mock-body">
+            <div class="terminal">Enter material type, for example FERT: FERT
+Enter plant, for example 1000: 1000
+
+Report generated for:
+Material Type: FERT
+Plant: 1000</div>
+        </div>
+    </div>
+
+    <button class="accordion">When is input() good enough?</button>
+    <div class="panel">
+        <p>
+            Use <strong>input()</strong> when you are learning, prototyping, or building a small tool for yourself.
+            For shared tools, command-line arguments or a web form are usually better.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Option 2: Use Command-Line Arguments</h2>
+    <p>
+        Command-line arguments let the user provide values when launching the script. This is closer to running a report
+        with predefined parameters.
+    </p>
+
+    <div class="code-block">python material_report.py --mtart FERT --plant 1000</div>
+
+    <p>
+        Python has a built-in module named <strong>argparse</strong> for this.
+    </p>
+
+    <div class="code-block">import argparse
+
+parser = argparse.ArgumentParser(
+    description="Generate a material report."
+)
+
+parser.add_argument(
+    "--mtart",
+    default="FERT",
+    help="Material type filter, for example FERT or HALB"
+)
+
+parser.add_argument(
+    "--plant",
+    default="1000",
+    help="Plant filter, for example 1000"
+)
+
+args = parser.parse_args()
+
+material_type = args.mtart
+plant = args.plant</div>
+
+    <h3>Expected terminal behavior</h3>
+    <div class="mock-window">
+        <div class="mock-title">Terminal Preview</div>
+        <div class="mock-body">
+            <div class="terminal">C:\dev\think-like-python&gt; python material_report.py --mtart FERT --plant 1000
+
+Loaded 6 material records.
+Applied filters:
+  Material Type: FERT
+  Plant: 1000
+
+Generated:
+  material_report.html
+  filtered_materials.xlsx</div>
+        </div>
+    </div>
+
+    <div class="callout success">
+        <strong>Practical value:</strong> Command-line parameters make your script easier to reuse, schedule, document, and automate.
+    </div>
+</div>
+
+<div class="section">
+    <h2>ABAP SELECT-OPTIONS vs Multiple Values</h2>
+    <p>
+        ABAP developers often use SELECT-OPTIONS when users need ranges or multiple values.
+        In Python, a simple beginner version is to accept a comma-separated list.
+    </p>
+
+    <div class="side-by-side">
+        <div>
+            <h3>ABAP</h3>
+            <div class="code-block">SELECT-OPTIONS: s_mtart FOR mara-mtart.
+
+SELECT matnr, mtart, plant
+  FROM mara
+  INTO TABLE @DATA(lt_materials)
+  WHERE mtart IN @s_mtart.</div>
+        </div>
+        <div>
+            <h3>Python</h3>
+            <div class="code-block">parser.add_argument(
+    "--mtart",
+    default="FERT",
+    help="Comma-separated material types"
+)
+
+material_types = args.mtart.split(",")
+
+filtered_df = df[df["mtart"].isin(material_types)]</div>
+        </div>
+    </div>
+
+    <h3>Example command</h3>
+    <div class="code-block">python material_report.py --mtart FERT,HALB --plant 1000</div>
+
+    <button class="accordion">Important beginner note</button>
+    <div class="panel">
+        <p>
+            This is not a full SELECT-OPTIONS replacement yet. It does not handle ranges, exclusions, or complex operators.
+            But it is enough to introduce the idea of user-controlled filtering.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Validate User Input</h2>
+    <p>
+        Once users control inputs, they can also enter values that do not exist. Your script should respond clearly instead
+        of failing silently.
+    </p>
+
+    <div class="code-block">if filtered_df.empty:
+    print("No records found for the selected filters.")
+    print(f"Material Type: {material_type}")
+    print(f"Plant: {plant}")
+    exit()</div>
+
+    <h3>Expected “no records” behavior</h3>
+    <div class="mock-window">
+        <div class="mock-title">Terminal Preview</div>
+        <div class="mock-body">
+            <div class="terminal">C:\dev\think-like-python&gt; python material_report.py --mtart FERT --plant 9999
+
+No records found for the selected filters.
+Material Type: FERT
+Plant: 9999</div>
+        </div>
+    </div>
+
+    <div class="callout warning">
+        <strong>Common mistake:</strong> Do not assume users will enter valid values. Good tools explain what happened.
+    </div>
+</div>
+
+<div class="section">
+    <h2>Full Script: Parameterized Material Report</h2>
+    <p>
+        This version builds on Chapter 3. It accepts material type and plant as runtime parameters.
+        Save it as <strong>material_report_parameters.py</strong>.
+    </p>
+
+    <div class="code-block">import argparse
+import pandas as pd
+from bokeh.io import output_file, save
+from bokeh.layouts import column
+from bokeh.models import ColumnDataSource, DataTable, TableColumn, Div
+from bokeh.plotting import figure
+
+# 1. Define command-line arguments
+parser = argparse.ArgumentParser(
+    description="Generate an ALV-style material report with Python."
+)
+
+parser.add_argument(
+    "--mtart",
+    default="FERT",
+    help="Comma-separated material types. Example: FERT,HALB"
+)
+
+parser.add_argument(
+    "--plant",
+    default="1000",
+    help="Plant filter. Example: 1000"
+)
+
+args = parser.parse_args()
+
+material_types = [value.strip() for value in args.mtart.split(",")]
+plant = args.plant.strip()
+
+# 2. Load data
+df = pd.read_csv("materials.csv")
+
+print(f"Loaded {len(df)} material records.")
+
+# 3. Apply filters
+filtered_df = df[
+    (df["mtart"].isin(material_types)) &
+    (df["plant"].astype(str) == plant)
+]
+
+if filtered_df.empty:
+    print("No records found for the selected filters.")
+    print(f"Material Types: {material_types}")
+    print(f"Plant: {plant}")
+    exit()
+
+# 4. Sort result
+filtered_df = filtered_df.sort_values(by="stock", ascending=False)
+
+# 5. Export to Excel
+excel_file = "filtered_materials.xlsx"
+filtered_df.to_excel(excel_file, index=False)
+
+# 6. Build Bokeh table
+source = ColumnDataSource(filtered_df)
+
+columns = [
+    TableColumn(field="matnr", title="Material"),
+    TableColumn(field="maktx", title="Description"),
+    TableColumn(field="mtart", title="Type"),
+    TableColumn(field="plant", title="Plant"),
+    TableColumn(field="stock", title="Stock")
+]
+
+table = DataTable(
+    source=source,
+    columns=columns,
+    width=950,
+    height=280,
+    sortable=True
+)
+
+# 7. Build chart
+counts = filtered_df["mtart"].value_counts()
+
+chart = figure(
+    x_range=list(counts.index),
+    title="Filtered Material Count by Type",
+    height=350,
+    width=700
+)
+
+chart.vbar(
+    x=list(counts.index),
+    top=list(counts.values),
+    width=0.6
+)
+
+# 8. Save browser report
+html_file = "material_report.html"
+
+title = Div(
+    text=f\"\"\"
+    &lt;h2&gt;Material Report&lt;/h2&gt;
+    &lt;p&gt;Material Types: {", ".join(material_types)} | Plant: {plant}&lt;/p&gt;
+    &lt;p&gt;Excel export created: {excel_file}&lt;/p&gt;
+    \"\"\"
+)
+
+output_file(html_file)
+save(column(title, table, chart))
+
+print("Report generated successfully.")
+print(f"HTML report: {html_file}")
+print(f"Excel export: {excel_file}")</div>
+
+    <button class="accordion">What does output_file() and save() do?</button>
+    <div class="panel">
+        <p>
+            In Chapter 3, <strong>show()</strong> immediately opened the browser. In this chapter, <strong>output_file()</strong>
+            and <strong>save()</strong> create an HTML file that can be shared or uploaded somewhere later.
+        </p>
+    </div>
+</div>
+
+<div class="section">
+    <h2>What You Should See</h2>
+
+    <div class="three-col">
+        <div class="file-card">
+            <div class="file-icon">⌨️</div>
+            <strong>Command</strong>
+            <p><code>python material_report_parameters.py --mtart FERT --plant 1000</code></p>
+        </div>
+        <div class="file-card">
+            <div class="file-icon">🌐</div>
+            <strong>HTML Report</strong>
+            <p>A browser report named <strong>material_report.html</strong>.</p>
+        </div>
+        <div class="file-card">
+            <div class="file-icon">📊</div>
+            <strong>Excel Export</strong>
+            <p>A filtered Excel file named <strong>filtered_materials.xlsx</strong>.</p>
+        </div>
+    </div>
+
+    <h3>Expected browser preview</h3>
+    <div class="mock-window">
+        <div class="mock-title">material_report.html</div>
+        <div class="mock-body">
+            <h3 style="margin-top:0;color:#0b1f3a;">Material Report</h3>
+            <p>Material Types: FERT | Plant: 1000</p>
+            <table class="preview-table">
+                <tr>
+                    <th>Material</th>
+                    <th>Description</th>
+                    <th>Type</th>
+                    <th>Plant</th>
+                    <th>Stock</th>
+                </tr>
+                <tr><td>1006</td><td>Demo Finished Product 3</td><td>FERT</td><td>1000</td><td>67</td></tr>
+                <tr><td>1001</td><td>Demo Finished Product</td><td>FERT</td><td>1000</td><td>45</td></tr>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Folder Structure</h2>
+    <p>
+        By now, your folder should look something like this:
+    </p>
+
+    <div class="code-block">think-like-python-project/
+│
+├── material_report_parameters.py
+├── materials.csv
+├── material_report.html          ← generated
+├── filtered_materials.xlsx       ← generated
+└── requirements.txt</div>
+
+    <button class="accordion">Suggested requirements.txt</button>
+    <div class="panel">
+        <div class="code-block">pandas
+bokeh
+openpyxl</div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Try This</h2>
+    <ul>
+        <li>Run the report for plant <strong>2000</strong>.</li>
+        <li>Run the report for material types <strong>FERT,HALB</strong>.</li>
+        <li>Change the default material type from <strong>FERT</strong> to <strong>HALB</strong>.</li>
+        <li>Add a new command-line parameter named <strong>--min-stock</strong>.</li>
+        <li>Modify the report title so it shows the number of filtered records.</li>
+    </ul>
+
+    <button class="accordion">Stretch goal: add --min-stock</button>
+    <div class="panel">
+        <div class="code-block">parser.add_argument(
+    "--min-stock",
+    type=int,
+    default=0,
+    help="Minimum stock quantity"
+)
+
+# Later in the filter:
+filtered_df = filtered_df[filtered_df["stock"] >= args.min_stock]</div>
+    </div>
+</div>
+
+<div class="section">
+    <h2>Chapter 4 Checkpoint</h2>
+    <ul>
+        <li>You understand how ABAP selection-screen thinking maps to Python input.</li>
+        <li>You can ask users for values with <strong>input()</strong>.</li>
+        <li>You can pass values using command-line arguments.</li>
+        <li>You can accept multiple values using comma-separated arguments.</li>
+        <li>You can validate empty results and give clear feedback.</li>
+        <li>You can generate an HTML report and Excel output without hardcoding filters.</li>
+    </ul>
+
+    <div class="callout info">
+        <strong>Next:</strong> Now that the script behaves more like a tool, the next step is to give it a real interface.
+        Chapter 5 can introduce a simple Flask web app with a form that replaces the command line.
+    </div>
+</div>
+
+<p class="footer-note">
+    Think Like Python: A Guide for ABAP Developers — Chapter 4
+</p>
+
+</div>
+
+<script>
+var acc = document.getElementsByClassName("accordion");
+for (var i = 0; i < acc.length; i++) {
+  acc[i].onclick = function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  }
+}
+</script>
+
+
+<div class="book-nav" style="position: static; margin-top: 30px;">
+  <div class="book-nav-inner">
+    <div class="book-nav-title">End of Chapter 4</div>
+    <div class="book-nav-links"><a class="primary-link" href="index.html">Home</a><a href="about.html">About</a><a href="chapter-03-make-it-useful.html">Previous</a><a href="chapter-05-give-it-a-web-interface.html">Next</a></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  © 2026 Edwin A. Rodriguez — Think Like Python. All rights reserved.
+</footer>
+
+</body>
+</html>
